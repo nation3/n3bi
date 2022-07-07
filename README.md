@@ -1,3 +1,3 @@
-# ubi
+# n3bi
 
-Universal Basic Income (UBI) for Nation3 Citizens
+Basic Income (BI) for Nation3 Citizens
