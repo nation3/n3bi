@@ -23,3 +23,4 @@ jobs:
 
     - run: npx hardhat test
     - run: npx hardhat coverage
+    - uses: codecov/codecov-action@v3
