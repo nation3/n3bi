@@ -1,5 +1,5 @@
 {
-  "name": "@nation3/ubi",
+  "name": "n3bi",
   "version": "1.0.0",
   "description": "Basic Income (BI) for Nation3 Citizens",
   "main": "index.js",
@@ -8,17 +8,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nation3/ubi.git"
+    "url": "git+https://github.com/nation3/n3bi.git"
   },
   "keywords": [
-    "ubi", "ethereum"
+    "ubi", "ethereum", "nation3"
   ],
   "author": "Nation3",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/nation3/ubi/issues"
+    "url": "https://github.com/nation3/n3bi/issues"
   },
-  "homepage": "https://github.com/nation3/ubi#readme",
+  "homepage": "https://github.com/nation3/n3bi#readme",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
     "@nomiclabs/hardhat-etherscan": "^3.1.0",
