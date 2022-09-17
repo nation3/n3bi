@@ -11,7 +11,9 @@
     "url": "git+https://github.com/nation3/n3bi.git"
   },
   "keywords": [
-    "ubi", "ethereum", "nation3"
+    "ubi",
+    "ethereum",
+    "nation3"
   ],
   "author": "Nation3",
   "license": "GPL-3.0",
