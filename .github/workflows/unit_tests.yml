@@ -24,5 +24,3 @@ jobs:
     - run: npx hardhat test
     - run: npx hardhat coverage
     - uses: codecov/codecov-action@v3
-      with:
-        fail_ci_if_error: true
