@@ -25,5 +25,5 @@ jobs:
     - run: npx hardhat coverage
     - run: npx istanbul check-coverage --lines 80
     - uses: codecov/codecov-action@v3
-      with:
-        fail_ci_if_error: true
+      # with:
+      #   fail_ci_if_error: true
