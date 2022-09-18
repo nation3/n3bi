@@ -106,6 +106,7 @@ dist
 
 # TypeScript bindings for Ethereum
 typechain
+typechain-types
 
 #Hardhat files
 cache
