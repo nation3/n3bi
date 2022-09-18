@@ -37,6 +37,12 @@ Run code coverage:
 npx hardhat coverage
 ```
 
+Check if coverage threshold has been met:
+
+```
+npx istanbul check-coverage --lines 80
+```
+
 ## Local Ethereum Node
 
 Start a local Ethereum network node:
