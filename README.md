@@ -22,11 +22,49 @@ npx hardhat compile
 ## Unit Tests
 
 Run unit tests:
+
 ```
 npx hardhat test
 ```
 
+### Code Coverage
+
+[![codecov](https://codecov.io/gh/nation3/n3bi/branch/main/graph/badge.svg)](https://codecov.io/gh/nation3/n3bi)
+
 Run code coverage:
+
 ```
 npx hardhat coverage
+```
+
+## Local Ethereum Node
+
+Start a local Ethereum network node:
+
+```
+npx hardhat node
+```
+
+This will start Hardhat Network, and expose it as a JSON-RPC and Websocket server at http://127.0.0.1:8545/.
+
+## Linters
+
+Run ESLint:
+
+```
+npx eslint '**/*.{js,ts}' --fix
+```
+
+Run Solhint:
+
+```
+npx solhint 'contracts/**/*.sol' --fix
+```
+
+## Prettier
+
+Run Prettier:
+
+```
+npx prettier '**/*.{json,sol,md}' --write
 ```
