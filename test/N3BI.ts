@@ -8,11 +8,11 @@ describe("N3BI", function () {
     const n3bi = await N3BI.deploy(incomeTokenAddress);
     await n3bi.deployed();
 
-    expect(n3bi.address).to.not.be.undefined();
+    expect(n3bi.address).to.not.equal(undefined);
     expect(n3bi.address.length).to.equal(42);
 
     const incomeTokenAddressAfterDeployment = await n3bi.incomeToken();
-    expect(incomeTokenAddressAfterDeployment).to.not.be.undefined();
+    expect(incomeTokenAddressAfterDeployment).to.not.equal(undefined);
     expect(incomeTokenAddressAfterDeployment).to.equal(incomeTokenAddress);
   });
 });
