@@ -2,12 +2,17 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 describe("N3BI", function () {
-  it("// TODO", async function () {
+  it("Should deploy contract", async function () {
     const N3BI = await ethers.getContractFactory("N3BI");
-    const n3bi = await N3BI.deploy();
+    const incomeTokenAddress = "0x0000000000000000000000000000000000000000";
+    const n3bi = await N3BI.deploy(incomeTokenAddress);
     await n3bi.deployed();
 
-    // TODO
-    expect(true);
+    expect(n3bi.address).to.not.be.undefined;
+    expect(n3bi.address.length).to.equal(42);
+
+    const incomeTokenAddressAfterDeployment = await n3bi.incomeToken();
+    expect(incomeTokenAddressAfterDeployment).to.not.be.undefined;
+    expect(incomeTokenAddressAfterDeployment).to.equal(incomeTokenAddress);
   });
 });
