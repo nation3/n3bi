@@ -8,8 +8,8 @@
     "lint": "next lint",
     "cypress": "cypress open",
     "cypress:headless": "cypress run",
-    "e2e": "start-server-and-test start http://localhost:3000 cypress",
-    "e2e:headless": "start-server-and-test start http://localhost:3000 cypress:headless",
+    "e2e": "start-server-and-test dev http://localhost:3000/n3bi cypress",
+    "e2e:headless": "start-server-and-test dev http://localhost:3000/n3bi cypress:headless",
     "test": "jest",
     "test:coverage": "jest --coverage --collectCoverageFrom=./lib/**"
   },

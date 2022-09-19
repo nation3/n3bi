@@ -25,12 +25,12 @@ type Indexable = {
 const navigation = [
   {
     name: 'Start',
-    href: '/',
+    href: 'https://app.nation3.org',
     icon: <ViewGridIcon className="h-5 w-5" />,
   },
   {
     name: 'Become a citizen',
-    href: '/join',
+    href: 'https://app.nation3.org/join',
     icon: <UserAddIcon className="h-5 w-5" />,
   },
   {
@@ -40,12 +40,12 @@ const navigation = [
   },
   {
     name: 'Lock tokens',
-    href: '/lock',
+    href: 'https://app.nation3.org/lock',
     icon: <LockClosedIcon className="h-5 w-5" />,
   },
   {
     name: 'Liquidity rewards',
-    href: '/liquidity',
+    href: 'https://app.nation3.org/liquidity',
     icon: <CurrencyDollarIcon className="h-5 w-5" />,
   },
   {
@@ -78,7 +78,7 @@ export default function Layout({ children }: any) {
   const onPassportChecked = (hasPassport: boolean) => {
     if (hasPassport) {
       navigation[1].name = 'Welcome, citizen'
-      navigation[1].href = '/citizen'
+      navigation[1].href = 'https://app.nation3.org/citizen'
       setNav(navigation)
       if (router.pathname === '/join' && !router.query.mintingPassport) {
         router.push('/citizen')
@@ -312,7 +312,7 @@ export default function Layout({ children }: any) {
                 <br />
                 By using this software, you agree to{' '}
                 <a
-                  href="https://github.com/nation3/app/blob/master/LICENSE.md"
+                  href="https://github.com/nation3/app/blob/main/LICENSE.md"
                   rel="noreferrer noopener"
                   target="_blank"
                   className="underline text-n3blue"
