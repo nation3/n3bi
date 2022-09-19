@@ -1,4 +1,4 @@
-name: Unit Tests and Coverage
+name: /ui Build, Lint, E2E, Test, Coverage
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     defaults:
       run:
-        working-directory: hardhat
+        working-directory: ui
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
@@ -23,12 +23,16 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: hardhat/package-lock.json
-    - run: npm install
-
-    - run: npx hardhat test
-    - run: npx hardhat coverage
-    - run: npx istanbul check-coverage --lines 80
+        cache-dependency-path: ui/yarn.lock
+    - run: npm install --global yarn
+    - run: echo $(yarn --version)
+    - run: cp .env.goerli .env.local
+    - run: yarn install
+    - run: yarn build
+    - run: yarn lint
+    - run: yarn e2e:headless
+    - run: yarn test
+    - run: yarn test:coverage
     - uses: codecov/codecov-action@v3
       with:
         fail_ci_if_error: false

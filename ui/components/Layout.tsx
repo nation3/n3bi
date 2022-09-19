@@ -39,11 +39,6 @@ const navigation = [
     icon: <CashIcon className="h-5 w-5" />,
   },
   {
-    name: 'Claim airdrop',
-    href: '/claim',
-    icon: <SparklesIcon className="h-5 w-5" />,
-  },
-  {
     name: 'Lock tokens',
     href: '/lock',
     icon: <LockClosedIcon className="h-5 w-5" />,

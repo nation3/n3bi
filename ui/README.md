@@ -1,6 +1,7 @@
-# Nation3 App UI
+# N3BI UI
 
-https://app.nation3.org
+Mainnet: https://n3bi.nation3.org
+Goerli: https://n3bi-goerli.vercel.app
 
 ## Run the UI locally
 
@@ -38,7 +39,7 @@ Start the development server:
 yarn dev
 ```
 
-Then open http://localhost:42069 in a browser.
+Then open http://localhost:3000 in a browser.
 
 ## Integration Testing
 
@@ -61,7 +62,7 @@ yarn test
 
 ## Code Coverage
 
-[![codecov](https://codecov.io/gh/nation3/app/branch/main/graph/badge.svg)](https://codecov.io/gh/nation3/app)
+[![codecov](https://codecov.io/gh/nation3/n3bi/branch/main/graph/badge.svg)](https://codecov.io/gh/nation3/n3bi)
 
 Run code coverage:
 ```
