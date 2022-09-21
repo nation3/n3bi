@@ -2,7 +2,7 @@ import Head from 'next/head'
 import React from 'react'
 
 export default function WebsiteHead({ title }: any) {
-  const description = 'Citizen app for the citizens of Nation3'
+  const description = 'Basic Income for Nation3 Citizens'
   const image = 'https://app.nation3.org/social.jpg'
 
   return (
