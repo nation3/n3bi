@@ -13,3 +13,14 @@ updates:
     directory: "/hardhat"
     schedule:
       interval: "daily"
+
+- package-ecosystem: "npm" # See documentation for possible values
+    directory: "/ui" # Location of package manifests
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 1
+  
+  - package-ecosystem: "github-actions"
+    directory: "/ui"
+    schedule:
+      interval: "daily"
