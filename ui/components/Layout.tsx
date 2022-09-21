@@ -1,5 +1,5 @@
 import {
-  CashIcon, ChevronDownIcon, ChevronRightIcon, CurrencyDollarIcon, ExternalLinkIcon, HomeIcon, KeyIcon, LockClosedIcon, LogoutIcon, MenuIcon, NewspaperIcon, PlusIcon, SparklesIcon, UserAddIcon, UserIcon, ViewGridIcon, XCircleIcon
+  CashIcon, ChevronDownIcon, ChevronRightIcon, CurrencyDollarIcon, ExternalLinkIcon, HomeIcon, KeyIcon, LockClosedIcon, LogoutIcon, MenuIcon, NewspaperIcon, PlusIcon, UserAddIcon, UserIcon, ViewGridIcon, XCircleIcon
 } from '@heroicons/react/outline'
 import Image from 'next/image'
 import Link from 'next/link'
