@@ -7,12 +7,13 @@ interface DeploymentConfig {
   nationPassportAgreementStatement: string,
   nationPassportAgreementURI: string,
   nationPassportRequiredBalance: string,
-  nationPassportRevokeUnderBalance: string,
+  nationPassportRevokeUnderBalance: string
 }
 
 interface Config {
   nationToken: string,
   balancerDomain: string,
+  etherscanDomain: string,
   nationPassportNFT: string,
   nationPassportNFTIssuer: string,
   nationPassportAgreementStatement: string,
@@ -26,6 +27,7 @@ const defaultConfig = require(`../../hardhat/contracts/deployments/${chain}.json
 const config: Config = {
   nationToken: defaultConfig.nationToken || zeroAddress,
   balancerDomain: chain === 'goerli' ? 'https://goerli.balancer.fi' : 'https://app.balancer.fi',
+  etherscanDomain: chain === 'goerli' ? 'https://goerli.etherscan.io' : 'https://etherscan.io',
   nationPassportNFT: defaultConfig.nationPassportNFT || zeroAddress,
   nationPassportNFTIssuer: defaultConfig.nationPassportNFTIssuer || zeroAddress,
   nationPassportAgreementStatement: defaultConfig.nationPassportAgreementStatement || "",
@@ -38,6 +40,7 @@ console.log(config)
 export const {
   nationToken,
   balancerDomain,
+  etherscanDomain,
   nationPassportNFT,
   nationPassportNFTIssuer,
   nationPassportAgreementStatement,
