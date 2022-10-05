@@ -14,7 +14,7 @@
     "test:coverage": "jest --coverage --collectCoverageFrom=./lib/**"
   },
   "dependencies": {
-    "@heroicons/react": "^1.0.5",
+    "@heroicons/react": "^2.0.11",
     "@metamask/eth-sig-util": "^4.0.1",
     "@types/node": "^18.7.23",
     "@types/react-dom": "^18.0.4",
