@@ -1,6 +1,6 @@
 import {
-  CashIcon, ChevronDownIcon, ChevronRightIcon, CurrencyDollarIcon, ExternalLinkIcon, HomeIcon, KeyIcon, LockClosedIcon, LogoutIcon, MenuIcon, NewspaperIcon, PlusIcon, UserAddIcon, UserIcon, ViewGridIcon, XCircleIcon
-} from '@heroicons/react/outline'
+  BanknotesIcon, ChevronDownIcon, ChevronRightIcon, CurrencyDollarIcon, ArrowTopRightOnSquareIcon, HomeIcon, KeyIcon, LockClosedIcon, ArrowRightOnRectangleIcon, Bars3Icon, NewspaperIcon, PlusIcon, UserPlusIcon, UserIcon, Squares2X2Icon, XCircleIcon
+} from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -26,17 +26,17 @@ const navigation = [
   {
     name: 'Start',
     href: 'https://app.nation3.org',
-    icon: <ViewGridIcon className="h-5 w-5" />,
+    icon: <Squares2X2Icon className="h-5 w-5" />,
   },
   {
     name: 'Become a citizen',
     href: 'https://app.nation3.org/join',
-    icon: <UserAddIcon className="h-5 w-5" />,
+    icon: <UserPlusIcon className="h-5 w-5" />,
   },
   {
     name: 'Claim basic income',
     href: '/n3bi',
-    icon: <CashIcon className="h-5 w-5" />,
+    icon: <BanknotesIcon className="h-5 w-5" />,
   },
   {
     name: 'Lock tokens',
@@ -110,7 +110,7 @@ export default function Layout({ children }: any) {
                     htmlFor="side-drawer"
                     className="btn btn-square btn-ghost"
                   >
-                    <MenuIcon className="h-8 w-8" />
+                    <Bars3Icon className="h-8 w-8" />
                   </label>
                 </div>
               </div>
@@ -177,7 +177,7 @@ export default function Layout({ children }: any) {
                       >
                         {item.icon}
                         {item.name}
-                        <ExternalLinkIcon className="h-5 w-5 absolute right-4 opacity-50" />
+                        <ArrowTopRightOnSquareIcon className="h-5 w-5 absolute right-4 opacity-50" />
                       </a>
                     )}
                   </li>
@@ -251,7 +251,7 @@ export default function Layout({ children }: any) {
 
                 <li key="logout">
                   <a onClick={() => disconnect()}>
-                    <LogoutIcon className="h-5 w-5" />
+                    <ArrowRightOnRectangleIcon className="h-5 w-5" />
                     Log out
                   </a>
                 </li>
