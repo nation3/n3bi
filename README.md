@@ -5,7 +5,6 @@ Basic Income for Nation3 Citizens
 ## North Star Metric
 
 Metric: Number of _active_ citizens.
- - Current: 16 citizens voted in the last Snapshot proposal ([N3GOV-17](https://vote.nation3.org/#/proposal/0x7528849e1ca24eb55b88834f9d7e5f3a0f249015f66213c4c59ef9718c4f9adf)).
  - Goal: Grow to 50 active citizens by the end of Q4 2022.
 
 ## Functionality
