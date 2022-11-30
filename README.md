@@ -4,8 +4,8 @@ Nation3 Basic Income
 
 ## North Star Metric
 
-Metric: Number of _active_ citizens.
- - Goal: Grow to 50 [active](https://github.com/nation3/nationcred-datasets/tree/main/nationcred#definition-of-active) citizens by the end of Q4 2022.
+Metric: Number of [_active_](https://github.com/nation3/nationcred-datasets/tree/main/nationcred#definition-of-active) citizens.
+ - Goal: Grow to 50 active citizens by the end of Q4 2022.
 
 ## Functionality
 
