@@ -33,7 +33,7 @@ A Nation3 citizen can only be enrolled if the following prerequisistes are in pl
 1. The account has a passport NFT
 1. The passport has not expired
 1. The passport is not about to expire within the next year
-1. The citizen is active
+1. The citizen is [active](https://github.com/nation3/nationcred-datasets/tree/main/nationcred#definition-of-active)
 
 Once eligible, the citizen can enroll for Basic Income, as long as the smart contract contains enough funding for 
 covering one additional citizen's Basic Income for the duration of 1 year.
