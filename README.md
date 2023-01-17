@@ -28,7 +28,7 @@ Each week/month, Nation3's NationCred maintainers will manually update the list 
 
 ### Enrollment
 
-A Nation3 citizen can only be enrolled if the following prerequisistes are in place:
+A Nation3 citizen can only be enrolled if the following prerequisites are in place:
 
 1. The account has a passport NFT
 1. The passport has not expired
