@@ -9,6 +9,7 @@
 <!--- Please describe in detail how you tested your changes. -->
 
 - [ ] Status checks pass (lint, build, test)
+- [ ] Works on `localhost`
 - [ ] Works on Goerli
 - [ ] Works on Sepolia
 - [ ] Works on Mainnet
