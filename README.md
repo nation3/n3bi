@@ -1,6 +1,6 @@
 # N3BI
 
-Nation3 Basic Income
+Nation3 Basic Income (N3BI)
 
 ## North Star Metric
 
