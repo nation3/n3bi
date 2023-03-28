@@ -1,10 +1,10 @@
 # N3BI
 
-Basic Income (BI) for Nation3 Citizens
+Nation3 Basic Income (N3BI)
 
 ## Description
 
-Basic Income for Nation3 Citizens (N3BI) is a service offered to holders of the Nation3 [NFT passport](https://github.com/nation3/app/blob/main/contracts/src/passport/Passport.sol).
+Basic Income for Nation3 Citizens (N3BI) is a service offered to holders of the Nation3 [NFT passport](https://github.com/nation3/foundations/blob/main/src/passport/Passport.sol).
 
 ## Install Dependencies
 
