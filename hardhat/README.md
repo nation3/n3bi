@@ -12,20 +12,6 @@ Basic Income for Nation3 Citizens (N3BI) is a service offered to holders of the 
 npm install
 ```
 
-## Linters
-
-```
-npx eslint '**/*.{js,ts}'
-```
-
-```
-npx solhint 'contracts/**/*.sol'
-```
-
-```
-npx prettier '**/*.{json,sol,md}' --check
-```
-
 ## Build
 
 ```
