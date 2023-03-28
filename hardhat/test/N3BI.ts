@@ -3,9 +3,13 @@ import { ethers } from "hardhat";
 
 describe("N3BI", function () {
   it("Should deploy contract", async function () {
-    const N3BI = await ethers.getContractFactory("N3BI");
     const incomeTokenAddress = ethers.constants.AddressZero;
-    const n3bi = await N3BI.deploy(incomeTokenAddress);
+
+    const PASS3 = await ethers.getContractFactory("Nation3GenesisPassport");
+    const pass3 = await PASS3.deploy();
+
+    const N3BI = await ethers.getContractFactory("N3BI");
+    const n3bi = await N3BI.deploy(incomeTokenAddress, pass3.address);
     await n3bi.deployed();
 
     expect(n3bi.address).to.not.equal(undefined);
@@ -20,9 +24,13 @@ describe("N3BI", function () {
     it("address is not a passport holder", async function () {
       const [owner] = await ethers.getSigners();
 
-      const N3BI = await ethers.getContractFactory("N3BI");
       const incomeTokenAddress = ethers.constants.AddressZero;
-      const n3bi = await N3BI.deploy(incomeTokenAddress);
+
+      const PASS3 = await ethers.getContractFactory("Nation3GenesisPassport");
+      const pass3 = await PASS3.deploy();
+
+      const N3BI = await ethers.getContractFactory("N3BI");
+      const n3bi = await N3BI.deploy(incomeTokenAddress, pass3.address);
       await n3bi.deployed();
 
       expect(await n3bi.isEligible(owner.address)).to.equal(false);
