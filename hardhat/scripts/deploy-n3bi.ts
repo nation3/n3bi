@@ -15,7 +15,9 @@ async function main() {
 
   // We get the contract to deploy
   const N3BI = await ethers.getContractFactory("N3BI");
-  const n3bi = await N3BI.deploy(ethers.constants.AddressZero);
+  const incomeTokenAddress = ethers.constants.AddressZero;
+  const passportAddress = ethers.constants.AddressZero;
+  const n3bi = await N3BI.deploy(incomeTokenAddress, passportAddress);
 
   await n3bi.deployed();
 
