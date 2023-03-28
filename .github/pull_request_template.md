@@ -1,6 +1,4 @@
-## Dework Task
-
-<!--- Please link to the Dework task here. -->
+<!--- Please describe what this PR is about here. -->
 
 ## Related GitHub Issue
 
@@ -10,8 +8,9 @@
 
 <!--- Please describe in detail how you tested your changes. -->
 
-- [ ] Status checks pass
+- [ ] Status checks pass (lint, build, test)
 - [ ] Works on Goerli
+- [ ] Works on Sepolia
 - [ ] Works on Mainnet
 
 ## Are There Admin Tasks?
