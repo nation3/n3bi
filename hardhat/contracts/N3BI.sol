@@ -17,4 +17,28 @@ contract N3BI {
         console.log("incomeTokenAddress:", incomeTokenAddress);
         incomeToken = IERC20(incomeTokenAddress);
     }
+
+    function isEligible(address citizen) public view returns (bool) {
+        // The account has a passport NFT
+        // TO DO
+
+        // The passport has not yet expired
+        // TO DO
+
+        // The passport is not about to expire within the next year
+        // TO DO
+
+        // The citizen is active
+        // TO DO
+
+        return false;
+    }
+
+    function enroll() public {
+        // TO DO
+    }
+
+    function claim() public {
+        // TO DO
+    }
 }
