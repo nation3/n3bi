@@ -1,6 +1,6 @@
 # N3BI
 
-Basic Income (BI) for Nation3 Citizens
+Nation3 Basic Income (N3BI)
 
 ## Description
 
