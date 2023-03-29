@@ -36,11 +36,12 @@ contract N3BI {
         nationCred = INationCred(nationCredAddress);
     }
 
-    function isEligible(address citizen) public view returns (bool) {
-        // The account has a passport NFT
-        uint256 passportBalance = passport.balanceOf(citizen);
-        console.log("passportBalance:", passportBalance);
-        if (passportBalance < 1) {
+    function isEligible(
+        address citizen,
+        uint16 passportID
+    ) public view returns (bool) {
+        // The account owns the passport NFT
+        if (!isPassportOwner(citizen, passportID)) {
             return false;
         }
 
@@ -51,8 +52,6 @@ contract N3BI {
         // TO DO
 
         // The citizen is active
-        uint16 passportID = getPassportID(citizen);
-        console.log("passportID:", passportID);
         if (!nationCred.isActive(passportID)) {
             return false;
         }
@@ -60,13 +59,12 @@ contract N3BI {
         return true;
     }
 
-    function getPassportID(address citizen) public view returns (uint16) {
-        for (uint16 i = 0; i < 420; i++) {
-            if (passport.ownerOf(i) == citizen) {
-                return i;
-            }
-        }
-        return 0;
+    function isPassportOwner(
+        address citizen,
+        uint16 passportID
+    ) public view returns (bool) {
+        address passportOwner = passport.ownerOf(passportID);
+        return (citizen == passportOwner);
     }
 
     function enroll() public {
