@@ -84,14 +84,10 @@ describe("N3BI", function () {
 
   describe("isEligible", function () {
     it("passportID does not exist", async function () {
-      const { n3bi, owner } = await loadFixture(
-        deployFixture
-      );
+      const { n3bi, owner } = await loadFixture(deployFixture);
 
       const passportID = 0;
-      expect(
-        await n3bi.isEligible(owner.address, passportID)
-      ).to.equal(false);
+      expect(await n3bi.isEligible(owner.address, passportID)).to.equal(false);
     });
 
     it("passportID exists, but address is not owner", async function () {
@@ -102,26 +98,22 @@ describe("N3BI", function () {
       await pass3.safeMint(owner.address);
 
       const passportID = 0;
-      expect(
-        await n3bi.isEligible(otherAccount.address, passportID)
-      ).to.equal(false);
+      expect(await n3bi.isEligible(otherAccount.address, passportID)).to.equal(
+        false
+      );
     });
 
     it("passportID exists, and address is owner, but nationcred is not active", async function () {
-      const { n3bi, pass3, owner } = await loadFixture(
-        deployFixture
-      );
+      const { n3bi, pass3, owner } = await loadFixture(deployFixture);
 
       await pass3.safeMint(owner.address);
 
       const passportID = 0;
-      expect(
-        await n3bi.isEligible(owner.address, passportID)
-      ).to.equal(false);
+      expect(await n3bi.isEligible(owner.address, passportID)).to.equal(false);
     });
 
     it("passportID exists, and address is owner, and nationcred is active", async function () {
-      const { n3bi, pass3, nationCred, owner  } = await loadFixture(
+      const { n3bi, pass3, nationCred, owner } = await loadFixture(
         deployFixture
       );
 
@@ -129,10 +121,8 @@ describe("N3BI", function () {
 
       const passportID = 0;
       await nationCred.setActiveCitizens([passportID]);
-      
-      expect(
-        await n3bi.isEligible(owner.address, passportID)
-      ).to.equal(true);
+
+      expect(await n3bi.isEligible(owner.address, passportID)).to.equal(true);
     });
   });
 });
