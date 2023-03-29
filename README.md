@@ -21,15 +21,15 @@ sequenceDiagram
 
 ### Eligibility Based on NationCred
 
-The NationCred smart contract contains code for getting the NationCred rank of an Ethereum account.
+The [`NationCred.sol`](https://github.com/nation3/nationcred-contracts/blob/main/contracts/NationCred.sol) smart contract contains code for getting the citizen activity status for a given passport ID.
 
-Each week/month, Nation3's NationCred maintainers will manually update the list of addresses that are eligible.
+Each week, Nation3's NationCred maintainers will manually update the list of citizens that are eligible.
 
 ### Enrollment
 
 A Nation3 citizen can only be enrolled if the following prerequisites are in place:
 
-1. The account has a passport NFT
+1. The account owns a passport NFT
 1. The passport has not expired
 1. The passport is not about to expire within the next year
 1. The citizen is [active](https://github.com/nation3/nationcred-datasets/tree/main/nationcred#definition-of-active)

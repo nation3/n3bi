@@ -17,7 +17,12 @@ async function main() {
   const N3BI = await ethers.getContractFactory("N3BI");
   const incomeTokenAddress = ethers.constants.AddressZero;
   const passportAddress = ethers.constants.AddressZero;
-  const n3bi = await N3BI.deploy(incomeTokenAddress, passportAddress);
+  const nationCredAddress = ethers.constants.AddressZero;
+  const n3bi = await N3BI.deploy(
+    incomeTokenAddress,
+    passportAddress,
+    nationCredAddress
+  );
 
   await n3bi.deployed();
 
