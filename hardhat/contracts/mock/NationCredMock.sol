@@ -10,12 +10,16 @@ contract NationCredMock is INationCred {
         passportIDs = passportIDs_;
     }
 
-    function isActive(uint16 passportID) public view returns (bool) {
+    function isActiveID(uint16 passportID) public view returns (bool) {
         for (uint16 i = 0; i < passportIDs.length; i++) {
             if (passportIDs[i] == passportID) {
                 return true;
             }
         }
+        return false;
+    }
+
+    function isActiveAddress(address citizen) public view returns (bool) {
         return false;
     }
 }
