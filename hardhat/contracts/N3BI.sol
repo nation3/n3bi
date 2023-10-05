@@ -64,7 +64,7 @@ contract N3BI {
         );
 
         // The citizen is active
-        if (!nationCred.isActive(passportID)) {
+        if (!nationCred.isActiveID(passportID)) {
             return false;
         }
         console.log(unicode"✅ The citizen is active");
