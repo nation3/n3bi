@@ -9,6 +9,7 @@ Basic Income for Nation3 Citizens (N3BI) is a service offered to holders of the 
 ## Install Dependencies
 
 ```
+cd hardhat
 npm install
 ```
 

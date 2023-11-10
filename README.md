@@ -6,6 +6,10 @@ Nation3 Basic Income (N3BI)
 
 Metric: Number of [_active_](https://github.com/nation3/nationcred-datasets/tree/main/nationcred#definition-of-active) citizens.
 
+## Research Summary
+
+https://app.clarity.so/nation3-public/docs/6fdd30ab-c6e3-4faa-942f-7a7a9a0cab16
+
 ## Functionality
 
 ### Two Smart Contracts
