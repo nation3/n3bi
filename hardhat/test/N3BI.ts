@@ -8,7 +8,7 @@ describe("N3BI", function () {
   async function deployFixture() {
     const [owner, otherAccount, user1, user2, user3] =
       await ethers.getSigners();
-    
+
     const PASS3 = await ethers.getContractFactory("PassportMock");
     const pass3 = await PASS3.deploy();
 
@@ -27,15 +27,10 @@ describe("N3BI", function () {
     );
 
     const NationCred = await ethers.getContractFactory("NationCredMock");
-    const nationCred = await NationCred.deploy(
-      pass3.address
-    );
+    const nationCred = await NationCred.deploy(pass3.address);
 
     const N3BI = await ethers.getContractFactory("N3BI");
-    const n3bi = await N3BI.deploy(
-      passportUtils.address,
-      nationCred.address
-    );
+    const n3bi = await N3BI.deploy(passportUtils.address, nationCred.address);
     await n3bi.deployed();
 
     return {
@@ -74,7 +69,9 @@ describe("N3BI", function () {
     // TO DO:  address is passport owner, but passport will expire within the next year
 
     it("address is owner of valid passport, but nationcred is not active", async function () {
-      const { n3bi, pass3, votingEscrow, owner } = await loadFixture(deployFixture);
+      const { n3bi, pass3, votingEscrow, owner } = await loadFixture(
+        deployFixture
+      );
 
       await pass3.safeMint(owner.address);
 
@@ -100,9 +97,8 @@ describe("N3BI", function () {
     });
 
     it("address is owner of valid passport, and nationcred is active", async function () {
-      const { n3bi, pass3, votingEscrow, nationCred, owner } = await loadFixture(
-        deployFixture
-      );
+      const { n3bi, pass3, votingEscrow, nationCred, owner } =
+        await loadFixture(deployFixture);
 
       await pass3.safeMint(owner.address);
 
