@@ -101,9 +101,7 @@ contract N3BI {
         return true;
     }
 
-    /**
-     * @notice Once eligible, the citizen can enroll for Basic Income, as long as the smart contract contains enough funding for covering one additional citizen's Basic Income for the duration of 1 year.
-     */
+    /// @notice Once eligible, the citizen can enroll for Basic Income, as long as the smart contract contains enough funding for covering one additional citizen's Basic Income for the duration of 1 year.
     function enroll() public {
         console.log("enroll");
 

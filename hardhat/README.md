@@ -75,3 +75,17 @@ Run Prettier:
 ```
 npx prettier '**/*.{json,sol,md}' --write
 ```
+
+## Deployments
+
+### Goerli
+
+https://github.com/nation3/foundations/blob/main/deployments/goerli.json
+
+- N3BI.sol: [`0x57F84d3dC8440Feab9f993976dC1a19109815112`](https://goerli.etherscan.io/address/0x57F84d3dC8440Feab9f993976dC1a19109815112)
+
+### Mainnet
+
+https://github.com/nation3/foundations/blob/main/deployments/mainnet.json
+
+- ...
