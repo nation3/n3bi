@@ -130,4 +130,14 @@ describe("N3BI", function () {
       expect(await n3bi.isEligible(owner.address)).to.equal(true);
     });
   });
+
+  describe("enroll", function () {
+    it("address is not passport owner", async function () {
+      const { n3bi, otherAccount } = await loadFixture(deployFixture);
+
+      await expect(
+        n3bi.connect(otherAccount).enroll()
+      ).to.be.revertedWithCustomError(n3bi, "NotEligibleError");
+    });
+  });
 });

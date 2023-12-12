@@ -39,6 +39,8 @@ contract N3BI {
      */
     INationCred public nationCred;
 
+    error NotEligibleError(address citizen);
+
     constructor(
         address passportUtilsAddress,
         address nationCredAddress
@@ -107,6 +109,12 @@ contract N3BI {
      */
     function enroll() public {
         console.log("enroll");
+
+        if (!isEligible(msg.sender)) {
+            revert NotEligibleError(msg.sender);
+        }
+        console.log(unicode"✅ The citizen is eligible for enrollment");
+
         // TO DO
     }
 
