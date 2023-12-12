@@ -1,6 +1,6 @@
 {
   "name": "n3bi",
-  "version": "1.0.0",
+  "version": "0.0.7",
   "description": "Basic Income (BI) for Nation3 Citizens",
   "main": "index.js",
   "scripts": {
