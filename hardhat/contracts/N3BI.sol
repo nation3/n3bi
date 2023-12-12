@@ -41,10 +41,7 @@ contract N3BI {
 
     error NotEligibleError(address citizen);
 
-    constructor(
-        address passportUtilsAddress,
-        address nationCredAddress
-    ) {
+    constructor(address passportUtilsAddress, address nationCredAddress) {
         console.log("Deploying N3BI");
         console.log("passportUtilsAddress:", passportUtilsAddress);
         console.log("nationCredAddress:", nationCredAddress);
@@ -66,9 +63,7 @@ contract N3BI {
     /**
      * @notice Checks if a Nation3 citizen is eligible to enroll for Basic Income.
      */
-    function isEligible(
-        address citizen
-    ) public view returns (bool) {
+    function isEligible(address citizen) public view returns (bool) {
         console.log("isEligible");
 
         // The account owns the passport NFT
@@ -84,7 +79,9 @@ contract N3BI {
         console.log(unicode"✅ The passport has not yet expired");
 
         // The passport is not about to expire within the next year
-        uint256 expirationTimestamp = passportUtils.getExpirationTimestamp(citizen);
+        uint256 expirationTimestamp = passportUtils.getExpirationTimestamp(
+            citizen
+        );
         console.log("expirationTimestamp:", expirationTimestamp);
         uint256 oneYearFromNow = block.timestamp + 365 days;
         console.log("oneYearFromNow:", oneYearFromNow);
