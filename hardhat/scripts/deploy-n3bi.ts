@@ -15,14 +15,11 @@ async function main() {
 
   // We get the contract to deploy
   const N3BI = await ethers.getContractFactory("N3BI");
-  const incomeTokenAddress = ethers.constants.AddressZero;
-  const passportAddress = ethers.constants.AddressZero;
-  const nationCredAddress = ethers.constants.AddressZero;
-  const n3bi = await N3BI.deploy(
-    incomeTokenAddress,
-    passportAddress,
-    nationCredAddress
-  );
+  const passportUtilsAddress = "0xdBBCE0e796d10C95D23b4AAfCD19DEf268502A5b"; // Goerli
+  // const passportUtilsAddress = "..."; // Mainnet
+  const nationCredAddress = "0x12ee4FE795CD3C42422CC7CE8b9446c27BdA531f"; // Goerli
+  // const nationCredAddress = "0x7794F0Eb1eA812fBcdaBD559551Fb26A79720925"; // Mainnet
+  const n3bi = await N3BI.deploy(passportUtilsAddress, nationCredAddress);
 
   await n3bi.deployed();
 
