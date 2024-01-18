@@ -35,22 +35,34 @@ contract N3BI {
     /// The smart contract used for checking if a Nation3 citizen is active.
     INationCred public nationCred;
 
+    /// The Basic Income amount a citizen can claim per yearly enrollment.
+    uint256 public amountPerEnrollment;
+
+    /// The total amount enrolled, accumulated over time.
+    uint256 public amountEnrolled;
+
     /// Stores the timestamp of each citizen's most recent enrollment.
     mapping(address => uint256) public enrollmentTimestamps;
 
     event Enrolled(address citizen);
+    event AmountPerEnrollmentUpdated(uint256 newAmount);
 
     error NotEligibleError(address citizen);
     error CurrentlyEnrolledError(address citizen, uint256 enrollmentTimestamp);
+    error NotEnoughFunding(uint256 amountAvailable, uint256 amountRequested);
 
-    constructor(address passportUtilsAddress, address nationCredAddress) {
+    constructor(address passportUtilsAddress, address nationCredAddress, uint256 amountPerEnrollment_) {
         console.log("Deploying N3BI");
         console.log("passportUtilsAddress:", passportUtilsAddress);
         console.log("nationCredAddress:", nationCredAddress);
+        console.log("amountPerEnrollment_:", amountPerEnrollment_);
         owner = address(msg.sender);
         passportUtils = IPassportUtils(passportUtilsAddress);
         nationCred = INationCred(nationCredAddress);
+        amountPerEnrollment = amountPerEnrollment_;
     }
+
+    receive() external payable {}
 
     function setOwner(address ownerAddress) public {
         require(msg.sender == owner, "You are not the owner");
@@ -65,6 +77,12 @@ contract N3BI {
     function setNationCred(address nationCredAddress) public {
         require(msg.sender == owner, "You are not the owner");
         nationCred = INationCred(nationCredAddress);
+    }
+
+    function setAmountPerEnrollment(uint256 amount) public {
+        require(msg.sender == owner, "You are not the owner");
+        amountPerEnrollment = amount;
+        emit AmountPerEnrollmentUpdated(amountPerEnrollment);
     }
 
     /// Checks if a Nation3 citizen is eligible to enroll for Basic Income.
@@ -121,6 +139,13 @@ contract N3BI {
             revert CurrentlyEnrolledError(msg.sender, enrollmentTimestamps[msg.sender]);
         }
 
+        uint256 amountAvailable = address(this).balance - amountEnrolled;
+        console.log("amountAvailable:", amountAvailable);
+        if (amountAvailable < amountPerEnrollment) {
+            revert NotEnoughFunding(amountAvailable, amountPerEnrollment);
+        }
+
+        amountEnrolled += amountPerEnrollment;
         enrollmentTimestamps[msg.sender] = block.timestamp;
         emit Enrolled(msg.sender);
     }

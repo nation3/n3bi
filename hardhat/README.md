@@ -54,6 +54,12 @@ npx hardhat node
 
 This will start Hardhat Network, and expose it as a JSON-RPC and Websocket server at http://127.0.0.1:8545/.
 
+## Deploy to Local Ethereum Node
+
+```
+npx hardhat run scripts/deploy-n3bi.ts
+```
+
 ## Linters
 
 Run ESLint:

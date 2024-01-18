@@ -8,6 +8,8 @@ describe("N3BI", function () {
   async function deployFixture() {
     const [owner, otherAccount, user1, user2, user3] =
       await ethers.getSigners();
+    const ownerBalance = await owner.getBalance();
+    console.log("ownerBalance:", ownerBalance);
 
     const PASS3 = await ethers.getContractFactory("PassportMock");
     const pass3 = await PASS3.deploy();
@@ -29,8 +31,10 @@ describe("N3BI", function () {
     const NationCred = await ethers.getContractFactory("NationCredMock");
     const nationCred = await NationCred.deploy(pass3.address);
 
+    const amountPerEnrollment = ethers.utils.parseEther("0.12");
+
     const N3BI = await ethers.getContractFactory("N3BI");
-    const n3bi = await N3BI.deploy(passportUtils.address, nationCred.address);
+    const n3bi = await N3BI.deploy(passportUtils.address, nationCred.address, amountPerEnrollment);
     await n3bi.deployed();
 
     return {
@@ -163,12 +167,20 @@ describe("N3BI", function () {
 
       const passportID = 0;
       await nationCred.setActiveCitizens([passportID]);
+
+      // Fund contract with 100 ETH
+      await owner.sendTransaction({
+        to: n3bi.address,
+        value: ethers.utils.parseEther("100")
+      });
+      expect(await ethers.provider.getBalance(n3bi.address)).to.equal(ethers.utils.parseEther("100"));
       
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
       await expect(
         n3bi.enroll()
       ).to.emit(n3bi, "Enrolled");
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.be.greaterThan(0);
+      expect(await n3bi.amountEnrolled()).to.equal(ethers.utils.parseEther("0.12"));
     });
 
     it("two enrollments - 2nd enrollment same day", async function () {
@@ -197,6 +209,13 @@ describe("N3BI", function () {
 
       const passportID = 0;
       await nationCred.setActiveCitizens([passportID]);
+
+      // Fund contract with 100 ETH
+      await owner.sendTransaction({
+        to: n3bi.address,
+        value: ethers.utils.parseEther("100")
+      });
+      expect(await ethers.provider.getBalance(n3bi.address)).to.equal(ethers.utils.parseEther("100"));
       
       // 1st enrollment
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
@@ -204,11 +223,13 @@ describe("N3BI", function () {
         n3bi.enroll()
       ).to.emit(n3bi, "Enrolled");
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.be.greaterThan(0);
+      expect(await n3bi.amountEnrolled()).to.equal(ethers.utils.parseEther("0.12"));
 
       // 2nd enrollment
       await expect(
         n3bi.enroll()
       ).to.be.revertedWithCustomError(n3bi, "CurrentlyEnrolledError");
+      expect(await n3bi.amountEnrolled()).to.equal(ethers.utils.parseEther("0.12"));
     });
 
     it("two enrollments - 2nd enrollment 364 days later", async function () {
@@ -237,6 +258,13 @@ describe("N3BI", function () {
 
       const passportID = 0;
       await nationCred.setActiveCitizens([passportID]);
+
+      // Fund contract with 100 ETH
+      await owner.sendTransaction({
+        to: n3bi.address,
+        value: ethers.utils.parseEther("100")
+      });
+      expect(await ethers.provider.getBalance(n3bi.address)).to.equal(ethers.utils.parseEther("100"));
       
       // 1st enrollment
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
@@ -245,6 +273,7 @@ describe("N3BI", function () {
       ).to.emit(n3bi, "Enrolled");
       const timestampOfFirstEnrollment = await n3bi.enrollmentTimestamps(owner.address);
       expect(timestampOfFirstEnrollment).to.be.greaterThan(0);
+      expect(await n3bi.amountEnrolled()).to.equal(ethers.utils.parseEther("0.12"));
 
       // Increase the time by 364 days
       const ONE_DAY_IN_SECONDS = 60*60*24;
@@ -256,6 +285,7 @@ describe("N3BI", function () {
         n3bi.enroll()
       ).to.be.revertedWithCustomError(n3bi, "CurrentlyEnrolledError");
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(timestampOfFirstEnrollment);
+      expect(await n3bi.amountEnrolled()).to.equal(ethers.utils.parseEther("0.12"));
     });
 
     it("two enrollments - 2nd enrollment 366 days later", async function () {
@@ -284,6 +314,13 @@ describe("N3BI", function () {
 
       const passportID = 0;
       await nationCred.setActiveCitizens([passportID]);
+
+      // Fund contract with 100 ETH
+      await owner.sendTransaction({
+        to: n3bi.address,
+        value: ethers.utils.parseEther("100")
+      });
+      expect(await ethers.provider.getBalance(n3bi.address)).to.equal(ethers.utils.parseEther("100"));
       
       // 1st enrollment
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
@@ -292,6 +329,7 @@ describe("N3BI", function () {
       ).to.emit(n3bi, "Enrolled");
       const timestampOf1stEnrollment = await n3bi.enrollmentTimestamps(owner.address);
       expect(timestampOf1stEnrollment).to.be.greaterThan(0);
+      expect(await n3bi.amountEnrolled()).to.equal(ethers.utils.parseEther("0.12"));
 
       // Increase the time by 366 days
       const ONE_DAY_IN_SECONDS = 60*60*24;
@@ -304,6 +342,7 @@ describe("N3BI", function () {
       ).to.emit(n3bi, "Enrolled");
       const timestampOf2ndEnrollment = await n3bi.enrollmentTimestamps(owner.address);
       expect(timestampOf2ndEnrollment).to.be.greaterThan(timestampOf1stEnrollment);
+      expect(await n3bi.amountEnrolled()).to.equal(ethers.utils.parseEther("0.24"));
     });
   });
 });
