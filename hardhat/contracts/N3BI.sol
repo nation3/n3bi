@@ -51,7 +51,11 @@ contract N3BI {
     error CurrentlyEnrolledError(address citizen, uint256 enrollmentTimestamp);
     error NotEnoughFunding(uint256 amountAvailable, uint256 amountRequested);
 
-    constructor(address passportUtilsAddress, address nationCredAddress, uint256 amountPerEnrollment_) {
+    constructor(
+        address passportUtilsAddress,
+        address nationCredAddress,
+        uint256 amountPerEnrollment_
+    ) {
         console.log("Deploying N3BI");
         console.log("passportUtilsAddress:", passportUtilsAddress);
         console.log("nationCredAddress:", nationCredAddress);
@@ -136,7 +140,10 @@ contract N3BI {
         uint256 oneYearAgo = block.timestamp - 365 days;
         console.log("oneYearAgo:", oneYearAgo);
         if (enrollmentTimestamps[msg.sender] > oneYearAgo) {
-            revert CurrentlyEnrolledError(msg.sender, enrollmentTimestamps[msg.sender]);
+            revert CurrentlyEnrolledError(
+                msg.sender,
+                enrollmentTimestamps[msg.sender]
+            );
         }
 
         uint256 amountAvailable = address(this).balance - amountEnrolled;
