@@ -29,17 +29,17 @@ contract N3BI {
 
     address public owner;
 
-    /**
-     * @notice The smart contract used for checking if a citizens holds a valid passport.
-     */
+    /// The smart contract used for checking if a citizens holds a valid passport.
     IPassportUtils public passportUtils;
 
-    /**
-     * @notice The smart contract used for checking if a Nation3 citizen is active.
-     */
+    /// The smart contract used for checking if a Nation3 citizen is active.
     INationCred public nationCred;
 
+    /// Stores the timestamp of each citizen's most recent enrollment.
+    mapping(address => uint256) public enrollmentTimestamps;
+
     error NotEligibleError(address citizen);
+    error CurrentlyEnrolledError(address citizen, uint256 enrollmentTimestamp);
 
     constructor(address passportUtilsAddress, address nationCredAddress) {
         console.log("Deploying N3BI");
@@ -60,9 +60,12 @@ contract N3BI {
         passportUtils = IPassportUtils(passportUtilsAddress);
     }
 
-    /**
-     * @notice Checks if a Nation3 citizen is eligible to enroll for Basic Income.
-     */
+    function setNationCred(address nationCredAddress) public {
+        require(msg.sender == owner, "You are not the owner");
+        nationCred = INationCred(nationCredAddress);
+    }
+
+    /// Checks if a Nation3 citizen is eligible to enroll for Basic Income.
     function isEligible(address citizen) public view returns (bool) {
         console.log("isEligible");
 
@@ -101,7 +104,7 @@ contract N3BI {
         return true;
     }
 
-    /// @notice Once eligible, the citizen can enroll for Basic Income, as long as the smart contract contains enough funding for covering one additional citizen's Basic Income for the duration of 1 year.
+    /// Once eligible, the citizen can enroll for Basic Income, as long as the smart contract contains enough funding for covering one additional citizen's Basic Income for the duration of 1 year.
     function enroll() public {
         console.log("enroll");
 
@@ -110,12 +113,16 @@ contract N3BI {
         }
         console.log(unicode"✅ The citizen is eligible for enrollment");
 
-        // TO DO
+        uint256 oneYearAgo = block.timestamp - 365 days;
+        console.log("oneYearAgo:", oneYearAgo);
+        if (enrollmentTimestamps[msg.sender] > oneYearAgo) {
+            revert CurrentlyEnrolledError(msg.sender, enrollmentTimestamps[msg.sender]);
+        }
+
+        enrollmentTimestamps[msg.sender] = block.timestamp;
     }
 
-    /**
-     * @notice Once enrolled, citizens can claim their earned Basic Income at any time.
-     */
+    /// Once enrolled, citizens can claim their earned Basic Income at any time.
     function claim() public {
         console.log("claim");
         // TO DO
