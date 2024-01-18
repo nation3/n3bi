@@ -165,7 +165,9 @@ describe("N3BI", function () {
       await nationCred.setActiveCitizens([passportID]);
       
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
-      await n3bi.enroll();
+      await expect(
+        n3bi.enroll()
+      ).to.emit(n3bi, "Enrolled");
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.be.greaterThan(0);
     });
 
@@ -198,7 +200,9 @@ describe("N3BI", function () {
       
       // 1st enrollment
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
-      await n3bi.enroll();
+      await expect(
+        n3bi.enroll()
+      ).to.emit(n3bi, "Enrolled");
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.be.greaterThan(0);
 
       // 2nd enrollment
@@ -236,7 +240,9 @@ describe("N3BI", function () {
       
       // 1st enrollment
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
-      await n3bi.enroll();
+      await expect(
+        n3bi.enroll()
+      ).to.emit(n3bi, "Enrolled");
       const timestampOfFirstEnrollment = await n3bi.enrollmentTimestamps(owner.address);
       expect(timestampOfFirstEnrollment).to.be.greaterThan(0);
 
@@ -281,7 +287,9 @@ describe("N3BI", function () {
       
       // 1st enrollment
       expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
-      await n3bi.enroll();
+      await expect(
+        n3bi.enroll()
+      ).to.emit(n3bi, "Enrolled");
       const timestampOf1stEnrollment = await n3bi.enrollmentTimestamps(owner.address);
       expect(timestampOf1stEnrollment).to.be.greaterThan(0);
 
@@ -291,7 +299,9 @@ describe("N3BI", function () {
       console.log("Time 366 days later:", await time.latest());
 
       // 2nd enrollment
-      await n3bi.enroll();
+      await expect(
+        n3bi.enroll()
+      ).to.emit(n3bi, "Enrolled");
       const timestampOf2ndEnrollment = await n3bi.enrollmentTimestamps(owner.address);
       expect(timestampOf2ndEnrollment).to.be.greaterThan(timestampOf1stEnrollment);
     });

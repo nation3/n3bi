@@ -38,6 +38,8 @@ contract N3BI {
     /// Stores the timestamp of each citizen's most recent enrollment.
     mapping(address => uint256) public enrollmentTimestamps;
 
+    event Enrolled(address citizen);
+
     error NotEligibleError(address citizen);
     error CurrentlyEnrolledError(address citizen, uint256 enrollmentTimestamp);
 
@@ -120,6 +122,7 @@ contract N3BI {
         }
 
         enrollmentTimestamps[msg.sender] = block.timestamp;
+        emit Enrolled(msg.sender);
     }
 
     /// Once enrolled, citizens can claim their earned Basic Income at any time.
