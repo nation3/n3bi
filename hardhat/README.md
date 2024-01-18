@@ -54,6 +54,12 @@ npx hardhat node
 
 This will start Hardhat Network, and expose it as a JSON-RPC and Websocket server at http://127.0.0.1:8545/.
 
+## Deploy to Local Ethereum Node
+
+```
+npx hardhat run scripts/deploy-n3bi.ts
+```
+
 ## Linters
 
 Run ESLint:
@@ -82,10 +88,20 @@ npx prettier '**/*.{json,sol,md}' --write
 
 https://github.com/nation3/foundations/blob/main/deployments/goerli.json
 
-- N3BI.sol: [`0x57F84d3dC8440Feab9f993976dC1a19109815112`](https://goerli.etherscan.io/address/0x57F84d3dC8440Feab9f993976dC1a19109815112)
+```
+npx hardhat run .\scripts\deploy-n3bi.ts --network goerli
+npx hardhat verify --network goerli <address> <arguments>
+```
+
+- [`N3BI.sol`](https://goerli.etherscan.io/address/0x036DA579A50ac81bE90A74421b4f9fAc5415Fa36#code)
 
 ### Mainnet
 
 https://github.com/nation3/foundations/blob/main/deployments/mainnet.json
+
+```
+npx hardhat run .\scripts\deploy-n3bi.ts --network mainnet
+npx hardhat verify --network mainnet <address> <arguments>
+```
 
 - ...

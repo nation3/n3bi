@@ -19,7 +19,12 @@ async function main() {
   // const passportUtilsAddress = "..."; // Mainnet
   const nationCredAddress = "0x12ee4FE795CD3C42422CC7CE8b9446c27BdA531f"; // Goerli
   // const nationCredAddress = "0x7794F0Eb1eA812fBcdaBD559551Fb26A79720925"; // Mainnet
-  const n3bi = await N3BI.deploy(passportUtilsAddress, nationCredAddress);
+  const amountPerEnrollment = ethers.utils.parseEther("0.012");
+  const n3bi = await N3BI.deploy(
+    passportUtilsAddress,
+    nationCredAddress,
+    amountPerEnrollment
+  );
 
   await n3bi.deployed();
 
