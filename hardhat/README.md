@@ -93,7 +93,7 @@ npx hardhat run .\scripts\deploy-n3bi.ts --network goerli
 npx hardhat verify --network goerli <address> <arguments>
 ```
 
-- [`N3BI.sol`](https://goerli.etherscan.io/address/0x036DA579A50ac81bE90A74421b4f9fAc5415Fa36#code)
+- [`N3BI.sol`](https://goerli.etherscan.io/address/0x449EFf083bbc92236134b45E8EA6C89035FEDd13#code)
 
 ### Mainnet
 
