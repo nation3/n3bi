@@ -1,8 +1,8 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.19;
 
-import "./nationcred/INationCred.sol";
-import "./utils/IPassportUtils.sol";
+import "@nation3/nationcred-contracts/INationCred.sol";
+import "@nation3/nationcred-contracts/utils/IPassportUtils.sol";
 import "hardhat/console.sol";
 
 /**
@@ -25,7 +25,7 @@ import "hardhat/console.sol";
  *     https://nation3.org
  */
 contract N3BI {
-    string public constant VERSION = "0.0.7";
+    string public constant VERSION = "0.2.0";
 
     address public owner;
 
