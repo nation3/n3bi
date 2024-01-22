@@ -100,11 +100,12 @@ npx hardhat verify --network goerli <address> <arguments>
 https://github.com/nation3/foundations/blob/main/deployments/sepolia.json
 
 ```
-npx hardhat run .\scripts\deploy-n3bi.ts --network sepolia 
+npx hardhat run .\scripts\deploy-n3bi.ts --network sepolia
 npx hardhat verify --network sepolia <address> <arguments>
 ```
 
 - [`N3BI.sol`](https://sepolia.etherscan.io/address/0x397201fe6CCA8eE9c3bF1a4b4DB27C6bEC47880C#code)
+
 ### Mainnet
 
 https://github.com/nation3/foundations/blob/main/deployments/mainnet.json
