@@ -89,7 +89,7 @@ npx prettier '**/*.{json,sol,md}' --write
 https://github.com/nation3/foundations/blob/main/deployments/goerli.json
 
 ```
-npx hardhat run .\scripts\deploy-n3bi.ts --network goerli
+npx hardhat run ./scripts/deploy-n3bi.ts --network goerli
 npx hardhat verify --network goerli <address> <arguments>
 ```
 
@@ -100,7 +100,7 @@ npx hardhat verify --network goerli <address> <arguments>
 https://github.com/nation3/foundations/blob/main/deployments/sepolia.json
 
 ```
-npx hardhat run .\scripts\deploy-n3bi.ts --network sepolia
+npx hardhat run ./scripts/deploy-n3bi.ts --network sepolia
 npx hardhat verify --network sepolia <address> <arguments>
 ```
 
@@ -111,7 +111,7 @@ npx hardhat verify --network sepolia <address> <arguments>
 https://github.com/nation3/foundations/blob/main/deployments/mainnet.json
 
 ```
-npx hardhat run .\scripts\deploy-n3bi.ts --network mainnet
+npx hardhat run ./scripts/deploy-n3bi.ts --network mainnet
 npx hardhat verify --network mainnet <address> <arguments>
 ```
 
