@@ -16,16 +16,16 @@ async function main() {
   // We get the contract to deploy
   const N3BI = await ethers.getContractFactory("N3BI");
   // Mainnet
-  // const passportUtilsAddress = "..."; 
-  // const nationCredAddress = "0x7794F0Eb1eA812fBcdaBD559551Fb26A79720925"; 
+  // const passportUtilsAddress = "...";
+  // const nationCredAddress = "0x7794F0Eb1eA812fBcdaBD559551Fb26A79720925";
 
   // Goerli
-  // const passportUtilsAddress = "0xdBBCE0e796d10C95D23b4AAfCD19DEf268502A5b"; 
-  // const nationCredAddress = "0x12ee4FE795CD3C42422CC7CE8b9446c27BdA531f"; 
+  // const passportUtilsAddress = "0xdBBCE0e796d10C95D23b4AAfCD19DEf268502A5b";
+  // const nationCredAddress = "0x12ee4FE795CD3C42422CC7CE8b9446c27BdA531f";
 
   // Sepolia
   const passportUtilsAddress = "0x4C72e8f37a2652BA6eEE956Ab30Ff21C3514cb5a";
-  const nationCredAddress = "0x0EF98EaE3021B91Cc84E0dd59BAA35cB59981E42"
+  const nationCredAddress = "0x0EF98EaE3021B91Cc84E0dd59BAA35cB59981E42";
 
   const amountPerEnrollment = ethers.utils.parseEther("0.012");
   const n3bi = await N3BI.deploy(
