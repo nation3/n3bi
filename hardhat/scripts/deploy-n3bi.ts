@@ -19,7 +19,11 @@ async function deployContract(name: string, args: Array<any>): Promise<string> {
   return contract.address;
 }
 
-async function verifyContract(contractPath: string, contractAddress: string, args: Array<any>) {
+async function verifyContract(
+  contractPath: string,
+  contractAddress: string,
+  args: Array<any>
+) {
   await run("verify:verify", {
     contract: contractPath,
     address: contractAddress,
@@ -29,16 +33,16 @@ async function verifyContract(contractPath: string, contractAddress: string, arg
 
 async function main() {
   const contractName = "N3BI";
-  const contractPath = "contracts/N3BI.sol:N3BI"
+  const contractPath = "contracts/N3BI.sol:N3BI";
 
   // Constructor Args
   const amountPerEnrollment = ethers.utils.parseEther("0.012");
   const args = [passportUtilsAddress, nationCredAddress, amountPerEnrollment];
 
-  console.log('Contract is deploying....');
+  console.log("Contract is deploying....");
   const contractAddress = await deployContract(contractName, args);
   console.log(`${contractName} deployed to: ${contractAddress}`);
-  console.log('Contract is verifying....');
+  console.log("Contract is verifying....");
   await verifyContract(contractPath, contractAddress, args);
 }
 
