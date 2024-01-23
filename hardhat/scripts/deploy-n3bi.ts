@@ -1,5 +1,4 @@
 import { ethers, run } from "hardhat";
-
 // Mainnet
 // const passportUtilsAddress = "...";
 // const nationCredAddress = "0x7794F0Eb1eA812fBcdaBD559551Fb26A79720925";
@@ -20,24 +19,27 @@ async function deployContract(name: string, args: Array<any>): Promise<string> {
   return contract.address;
 }
 
-async function verifyContract(contractAddress: string, args: Array<any>) {
+async function verifyContract(contractPath: string, contractAddress: string, args: Array<any>) {
   await run("verify:verify", {
+    contract: contractPath,
     address: contractAddress,
     constructorArguments: args,
   });
 }
+
 async function main() {
   const contractName = "N3BI";
+  const contractPath = "contracts/N3BI.sol:N3BI"
 
   // Constructor Args
   const amountPerEnrollment = ethers.utils.parseEther("0.012");
   const args = [passportUtilsAddress, nationCredAddress, amountPerEnrollment];
 
-  console.log("Contract is deploying....");
+  console.log('Contract is deploying....');
   const contractAddress = await deployContract(contractName, args);
   console.log(`${contractName} deployed to: ${contractAddress}`);
-  console.log("Contract is verifying....");
-  await verifyContract(contractAddress, args);
+  console.log('Contract is verifying....');
+  await verifyContract(contractPath, contractAddress, args);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
