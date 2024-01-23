@@ -17,27 +17,27 @@ async function deployContract(name: string, args: Array<any>): Promise<string> {
 
   const contract = await contractFactory.deploy(...args);
   await contract.deployed();
-  return contract.address
+  return contract.address;
 }
 
 async function verifyContract(contractAddress: string, args: Array<any>) {
   await run("verify:verify", {
     address: contractAddress,
-    constructorArguments: args
+    constructorArguments: args,
   });
 }
 async function main() {
-  const contractName = "N3BI"
+  const contractName = "N3BI";
 
   // Constructor Args
   const amountPerEnrollment = ethers.utils.parseEther("0.012");
-  const args = [passportUtilsAddress, nationCredAddress, amountPerEnrollment]
+  const args = [passportUtilsAddress, nationCredAddress, amountPerEnrollment];
 
-  console.log('Contract is deploying....')
-  const contractAddress = await deployContract(contractName, args)
+  console.log("Contract is deploying....");
+  const contractAddress = await deployContract(contractName, args);
   console.log(`${contractName} deployed to: ${contractAddress}`);
-  console.log('Contract is verifying....')
-  await verifyContract(contractAddress, args)
+  console.log("Contract is verifying....");
+  await verifyContract(contractAddress, args);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
