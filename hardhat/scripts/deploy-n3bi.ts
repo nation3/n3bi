@@ -12,8 +12,6 @@ import { ethers, run } from "hardhat";
 const passportUtilsAddress = "0x4C72e8f37a2652BA6eEE956Ab30Ff21C3514cb5a";
 const nationCredAddress = "0x0EF98EaE3021B91Cc84E0dd59BAA35cB59981E42";
 
-const amountPerEnrollment = ethers.utils.parseEther("0.012");
-
 async function deployContract(name: string, args: Array<any>): Promise<string> {
   const contractFactory = await ethers.getContractFactory(name);
 
@@ -30,7 +28,12 @@ async function verifyContract(contractAddress: string, args: Array<any>) {
 }
 async function main() {
   const contractName = "N3BI"
+
+  // Constructor Args
+  const amountPerEnrollment = ethers.utils.parseEther("0.012");
   const args = [passportUtilsAddress, nationCredAddress, amountPerEnrollment]
+
+  console.log('Contract is deploying....')
   const contractAddress = await deployContract(contractName, args)
   console.log(`${contractName} deployed to: ${contractAddress}`);
   console.log('Contract is verifying....')
