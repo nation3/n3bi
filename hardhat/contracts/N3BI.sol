@@ -41,7 +41,7 @@ contract N3BI {
     /// The total amount enrolled, accumulated over time.
     uint256 public amountEnrolled;
 
-    /// Stores the timestamp of each citizen's most recent enrollment.
+    /// The timestamp of each citizen's most recent enrollment.
     mapping(address => uint256) public enrollmentTimestamps;
 
     event Enrolled(address citizen);
