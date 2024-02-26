@@ -29,7 +29,7 @@ export default function Home() {
         </div>
 
         <div className='mt-4'>
-          <Image src={solarpunk} width={0} height={0} className='rounded-2xl' />
+          <Image alt='Solarpunk' src={solarpunk} width={0} height={0} className='rounded-2xl' />
         </div>
       </div>
     </main>
