@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 
 const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1_000;
 
-describe("N3BI", function () {
+describe("BasicIncomeDistributor", function () {
   async function deployFixture() {
     const [owner, otherAccount, user1, user2, user3] =
       await ethers.getSigners();
@@ -33,20 +33,22 @@ describe("N3BI", function () {
 
     const amountPerEnrollment = ethers.utils.parseEther("0.12");
 
-    const N3BI = await ethers.getContractFactory("N3BI");
-    const n3bi = await N3BI.deploy(
+    const BasicIncomeDistributor = await ethers.getContractFactory(
+      "BasicIncomeDistributor"
+    );
+    const distributor = await BasicIncomeDistributor.deploy(
       passportUtils.address,
       nationCred.address,
       amountPerEnrollment
     );
-    await n3bi.deployed();
+    await distributor.deployed();
 
     return {
       pass3,
       votingEscrow,
       passportUtils,
       nationCred,
-      n3bi,
+      distributor,
       owner,
       otherAccount,
       user1,
@@ -56,10 +58,10 @@ describe("N3BI", function () {
   }
 
   it("Should deploy contract", async function () {
-    const { n3bi, passportUtils } = await loadFixture(deployFixture);
+    const { distributor, passportUtils } = await loadFixture(deployFixture);
 
-    expect(n3bi.address).to.not.equal(undefined);
-    expect(n3bi.address.length).to.equal(42);
+    expect(distributor.address).to.not.equal(undefined);
+    expect(distributor.address.length).to.equal(42);
 
     expect(passportUtils.address).to.not.equal(undefined);
     expect(passportUtils.address.length).to.equal(42);
@@ -67,9 +69,9 @@ describe("N3BI", function () {
 
   describe("isEligible", function () {
     it("address is not passport owner", async function () {
-      const { n3bi, owner } = await loadFixture(deployFixture);
+      const { distributor, owner } = await loadFixture(deployFixture);
 
-      expect(await n3bi.isEligible(owner.address)).to.equal(false);
+      expect(await distributor.isEligible(owner.address)).to.equal(false);
     });
 
     // TO DO:  address is passport owner, but passport has expired
@@ -77,7 +79,7 @@ describe("N3BI", function () {
     // TO DO:  address is passport owner, but passport will expire within the next year
 
     it("address is owner of valid passport, but nationcred is not active", async function () {
-      const { n3bi, pass3, votingEscrow, owner } = await loadFixture(
+      const { distributor, pass3, votingEscrow, owner } = await loadFixture(
         deployFixture
       );
 
@@ -101,11 +103,11 @@ describe("N3BI", function () {
         ethers.BigNumber.from(lockEndInSeconds)
       );
 
-      expect(await n3bi.isEligible(owner.address)).to.equal(false);
+      expect(await distributor.isEligible(owner.address)).to.equal(false);
     });
 
     it("address is owner of valid passport, and nationcred is active", async function () {
-      const { n3bi, pass3, votingEscrow, nationCred, owner } =
+      const { distributor, pass3, votingEscrow, nationCred, owner } =
         await loadFixture(deployFixture);
 
       await pass3.safeMint(owner.address);
@@ -131,23 +133,23 @@ describe("N3BI", function () {
       const passportID = 0;
       await nationCred.setActiveCitizens([passportID]);
 
-      expect(await n3bi.isEligible(owner.address)).to.equal(true);
+      expect(await distributor.isEligible(owner.address)).to.equal(true);
     });
   });
 
   describe("enroll", function () {
     it("address is not passport owner", async function () {
-      const { n3bi, owner } = await loadFixture(deployFixture);
+      const { distributor, owner } = await loadFixture(deployFixture);
 
-      await expect(n3bi.enroll()).to.be.revertedWithCustomError(
-        n3bi,
+      await expect(distributor.enroll()).to.be.revertedWithCustomError(
+        distributor,
         "NotEligibleError"
       );
-      expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
+      expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
     });
 
     it("citizen is eligible", async function () {
-      const { n3bi, pass3, votingEscrow, nationCred, owner } =
+      const { distributor, pass3, votingEscrow, nationCred, owner } =
         await loadFixture(deployFixture);
 
       await pass3.safeMint(owner.address);
@@ -175,25 +177,25 @@ describe("N3BI", function () {
 
       // Fund contract with 100 ETH
       await owner.sendTransaction({
-        to: n3bi.address,
+        to: distributor.address,
         value: ethers.utils.parseEther("100"),
       });
-      expect(await ethers.provider.getBalance(n3bi.address)).to.equal(
+      expect(await ethers.provider.getBalance(distributor.address)).to.equal(
         ethers.utils.parseEther("100")
       );
 
-      expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
-      await expect(n3bi.enroll()).to.emit(n3bi, "Enrolled");
-      expect(await n3bi.enrollmentTimestamps(owner.address)).to.be.greaterThan(
-        0
-      );
-      expect(await n3bi.amountEnrolled()).to.equal(
+      expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
+      await expect(distributor.enroll()).to.emit(distributor, "Enrolled");
+      expect(
+        await distributor.enrollmentTimestamps(owner.address)
+      ).to.be.greaterThan(0);
+      expect(await distributor.amountEnrolled()).to.equal(
         ethers.utils.parseEther("0.12")
       );
     });
 
     it("two enrollments - 2nd enrollment same day", async function () {
-      const { n3bi, pass3, votingEscrow, nationCred, owner } =
+      const { distributor, pass3, votingEscrow, nationCred, owner } =
         await loadFixture(deployFixture);
 
       await pass3.safeMint(owner.address);
@@ -221,35 +223,35 @@ describe("N3BI", function () {
 
       // Fund contract with 100 ETH
       await owner.sendTransaction({
-        to: n3bi.address,
+        to: distributor.address,
         value: ethers.utils.parseEther("100"),
       });
-      expect(await ethers.provider.getBalance(n3bi.address)).to.equal(
+      expect(await ethers.provider.getBalance(distributor.address)).to.equal(
         ethers.utils.parseEther("100")
       );
 
       // 1st enrollment
-      expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
-      await expect(n3bi.enroll()).to.emit(n3bi, "Enrolled");
-      expect(await n3bi.enrollmentTimestamps(owner.address)).to.be.greaterThan(
-        0
-      );
-      expect(await n3bi.amountEnrolled()).to.equal(
+      expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
+      await expect(distributor.enroll()).to.emit(distributor, "Enrolled");
+      expect(
+        await distributor.enrollmentTimestamps(owner.address)
+      ).to.be.greaterThan(0);
+      expect(await distributor.amountEnrolled()).to.equal(
         ethers.utils.parseEther("0.12")
       );
 
       // 2nd enrollment
-      await expect(n3bi.enroll()).to.be.revertedWithCustomError(
-        n3bi,
+      await expect(distributor.enroll()).to.be.revertedWithCustomError(
+        distributor,
         "CurrentlyEnrolledError"
       );
-      expect(await n3bi.amountEnrolled()).to.equal(
+      expect(await distributor.amountEnrolled()).to.equal(
         ethers.utils.parseEther("0.12")
       );
     });
 
     it("two enrollments - 2nd enrollment 364 days later", async function () {
-      const { n3bi, pass3, votingEscrow, nationCred, owner } =
+      const { distributor, pass3, votingEscrow, nationCred, owner } =
         await loadFixture(deployFixture);
 
       await pass3.safeMint(owner.address);
@@ -277,21 +279,21 @@ describe("N3BI", function () {
 
       // Fund contract with 100 ETH
       await owner.sendTransaction({
-        to: n3bi.address,
+        to: distributor.address,
         value: ethers.utils.parseEther("100"),
       });
-      expect(await ethers.provider.getBalance(n3bi.address)).to.equal(
+      expect(await ethers.provider.getBalance(distributor.address)).to.equal(
         ethers.utils.parseEther("100")
       );
 
       // 1st enrollment
-      expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
-      await expect(n3bi.enroll()).to.emit(n3bi, "Enrolled");
-      const timestampOfFirstEnrollment = await n3bi.enrollmentTimestamps(
+      expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
+      await expect(distributor.enroll()).to.emit(distributor, "Enrolled");
+      const timestampOfFirstEnrollment = await distributor.enrollmentTimestamps(
         owner.address
       );
       expect(timestampOfFirstEnrollment).to.be.greaterThan(0);
-      expect(await n3bi.amountEnrolled()).to.equal(
+      expect(await distributor.amountEnrolled()).to.equal(
         ethers.utils.parseEther("0.12")
       );
 
@@ -301,20 +303,20 @@ describe("N3BI", function () {
       console.log("Time 364 days later:", await time.latest());
 
       // 2nd enrollment
-      await expect(n3bi.enroll()).to.be.revertedWithCustomError(
-        n3bi,
+      await expect(distributor.enroll()).to.be.revertedWithCustomError(
+        distributor,
         "CurrentlyEnrolledError"
       );
-      expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(
+      expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(
         timestampOfFirstEnrollment
       );
-      expect(await n3bi.amountEnrolled()).to.equal(
+      expect(await distributor.amountEnrolled()).to.equal(
         ethers.utils.parseEther("0.12")
       );
     });
 
     it("two enrollments - 2nd enrollment 366 days later", async function () {
-      const { n3bi, pass3, votingEscrow, nationCred, owner } =
+      const { distributor, pass3, votingEscrow, nationCred, owner } =
         await loadFixture(deployFixture);
 
       await pass3.safeMint(owner.address);
@@ -342,21 +344,21 @@ describe("N3BI", function () {
 
       // Fund contract with 100 ETH
       await owner.sendTransaction({
-        to: n3bi.address,
+        to: distributor.address,
         value: ethers.utils.parseEther("100"),
       });
-      expect(await ethers.provider.getBalance(n3bi.address)).to.equal(
+      expect(await ethers.provider.getBalance(distributor.address)).to.equal(
         ethers.utils.parseEther("100")
       );
 
       // 1st enrollment
-      expect(await n3bi.enrollmentTimestamps(owner.address)).to.equal(0);
-      await expect(n3bi.enroll()).to.emit(n3bi, "Enrolled");
-      const timestampOf1stEnrollment = await n3bi.enrollmentTimestamps(
+      expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
+      await expect(distributor.enroll()).to.emit(distributor, "Enrolled");
+      const timestampOf1stEnrollment = await distributor.enrollmentTimestamps(
         owner.address
       );
       expect(timestampOf1stEnrollment).to.be.greaterThan(0);
-      expect(await n3bi.amountEnrolled()).to.equal(
+      expect(await distributor.amountEnrolled()).to.equal(
         ethers.utils.parseEther("0.12")
       );
 
@@ -366,14 +368,14 @@ describe("N3BI", function () {
       console.log("Time 366 days later:", await time.latest());
 
       // 2nd enrollment
-      await expect(n3bi.enroll()).to.emit(n3bi, "Enrolled");
-      const timestampOf2ndEnrollment = await n3bi.enrollmentTimestamps(
+      await expect(distributor.enroll()).to.emit(distributor, "Enrolled");
+      const timestampOf2ndEnrollment = await distributor.enrollmentTimestamps(
         owner.address
       );
       expect(timestampOf2ndEnrollment).to.be.greaterThan(
         timestampOf1stEnrollment
       );
-      expect(await n3bi.amountEnrolled()).to.equal(
+      expect(await distributor.amountEnrolled()).to.equal(
         ethers.utils.parseEther("0.24")
       );
     });

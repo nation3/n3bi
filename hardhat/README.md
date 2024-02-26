@@ -57,7 +57,7 @@ This will start Hardhat Network, and expose it as a JSON-RPC and Websocket serve
 ## Deploy to Local Ethereum Node
 
 ```
-npx hardhat run scripts/deploy-n3bi.ts
+npx hardhat run scripts/deploy-distributor.ts
 ```
 
 ## Linters
@@ -89,11 +89,11 @@ npx prettier '**/*.{json,sol,md}' --write
 https://github.com/nation3/foundations/blob/main/deployments/sepolia.json
 
 ```
-npx hardhat run ./scripts/deploy-n3bi.ts --network sepolia
+npx hardhat run --network sepolia ./scripts/deploy-distributor.ts
 npx hardhat verify --network sepolia <address> <arguments>
 ```
 
-- `N3BI.sol`: [`0x24E95365C3078f1CF0Ef42e5b875Aa64934c3659`](https://sepolia.etherscan.io/address/0x24E95365C3078f1CF0Ef42e5b875Aa64934c3659)
+- `BasicIncomeDistributor.sol`: [`0x1889E59E1c2b2F4D6ad1114a197652b052fb9109`](https://sepolia.etherscan.io/address/0x1889E59E1c2b2F4D6ad1114a197652b052fb9109)
 
 ### Mainnet
 

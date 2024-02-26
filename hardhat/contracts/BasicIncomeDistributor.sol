@@ -24,7 +24,7 @@ import "hardhat/console.sol";
  *         Nation3 DAO
  *     https://nation3.org
  */
-contract N3BI {
+contract BasicIncomeDistributor {
     string public constant VERSION = "0.4.0";
 
     address public owner;
@@ -56,7 +56,7 @@ contract N3BI {
         address nationCredAddress,
         uint256 amountPerEnrollment_
     ) {
-        console.log("Deploying N3BI");
+        console.log("Deploying BasicIncomeDistributor");
         console.log("passportUtilsAddress:", passportUtilsAddress);
         console.log("nationCredAddress:", nationCredAddress);
         console.log("amountPerEnrollment_:", amountPerEnrollment_);
