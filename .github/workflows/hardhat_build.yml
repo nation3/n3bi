@@ -1,4 +1,4 @@
-name: Hardhat Build
+name: Hardhat -Build
 
 on:
   push:
