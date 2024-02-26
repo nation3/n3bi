@@ -6,7 +6,7 @@ import "../passport/IPassportIssuer.sol";
 import "../governance/IVotingEscrow.sol";
 
 contract PassportUtilsMock is IPassportUtils {
-    string public constant VERSION = "0.6.3";
+    string public constant VERSION = "0.6.8";
     IPassportIssuer public passportIssuer;
     IVotingEscrow public votingEscrow;
 
@@ -21,6 +21,13 @@ contract PassportUtilsMock is IPassportUtils {
     function isOwner(address account) public view returns (bool) {
         uint8 passportStatus = passportIssuer.passportStatus(account);
         return passportStatus == 1;
+    }
+
+    /**
+     * @inheritdoc IPassportUtils
+     */
+    function getOwnerAddress(uint16 passportID) public view returns (address) {
+        // TO DO
     }
 
     /**
@@ -59,7 +66,7 @@ contract PassportUtilsMock is IPassportUtils {
         uint256 lockAmount,
         uint256 lockEnd,
         uint256 votingEscrowThreshold
-    ) public view returns (uint256) {
+    ) public pure returns (uint256) {
         if (lockAmount < votingEscrowThreshold) {
             return 0;
         }
