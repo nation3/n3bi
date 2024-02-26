@@ -84,7 +84,7 @@ npx prettier '**/*.{json,sol,md}' --write
 
 ## Deployments
 
-### Sepolia
+### Sepolia (`v0.4.0`)
 
 https://github.com/nation3/foundations/blob/main/deployments/sepolia.json
 
@@ -93,7 +93,7 @@ npx hardhat run ./scripts/deploy-n3bi.ts --network sepolia
 npx hardhat verify --network sepolia <address> <arguments>
 ```
 
-- `N3BI.sol`: [`0x7f50F6330A43b5C53475336d8Ddc3a0B43A3f5d0`](https://sepolia.etherscan.io/address/0x7f50F6330A43b5C53475336d8Ddc3a0B43A3f5d0)
+- `N3BI.sol`: [`0x24E95365C3078f1CF0Ef42e5b875Aa64934c3659`](https://sepolia.etherscan.io/address/0x24E95365C3078f1CF0Ef42e5b875Aa64934c3659)
 
 ### Mainnet
 
