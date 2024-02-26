@@ -1,5 +1,5 @@
-import { ethers, run } from "hardhat";
-import { verifyContract, deployContract } from "./helpers"
+import { ethers } from "hardhat";
+import { verifyContract, deployContract } from "./helpers";
 
 // Sepolia
 const passportUtilsAddress = "0x7Ef8C512D39547873A681242EA87881CD2b8B7B7";
@@ -10,7 +10,6 @@ const amountPerEnrollment = ethers.utils.parseEther("0.0033");
 // const passportUtilsAddress = "...";
 // const nationCredAddress = "0x7794F0Eb1eA812fBcdaBD559551Fb26A79720925";
 // const amountPerEnrollment = ethers.utils.parseEther("0.0333");
-
 
 async function main() {
   const contractName = "N3BI";

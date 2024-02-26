@@ -1,12 +1,16 @@
 import { ethers, run, network } from "hardhat";
-export async function verifyContract(contractPath: string, contractAddress: string, args: Array<any>) {
-  if (network.name == "hardhat") {
-    return
+export async function verifyContract(
+  contractPath: string,
+  contractAddress: string,
+  args: Array<any>
+) {
+  if (network.name === "hardhat") {
+    return;
   }
-  console.log('Waiting for 30 seconds before verifying...');
+  console.log("Waiting for 30 seconds before verifying...");
   await sleep(30_000);
 
-  console.log('Contract is verifying....');
+  console.log("Contract is verifying....");
   await run("verify:verify", {
     contract: contractPath,
     address: contractAddress,
@@ -14,8 +18,11 @@ export async function verifyContract(contractPath: string, contractAddress: stri
   });
 }
 
-export async function deployContract(name: string, args: Array<any>): Promise<string> {
-  console.log('Contract is deploying....');
+export async function deployContract(
+  name: string,
+  args: Array<any>
+): Promise<string> {
+  console.log("Contract is deploying....");
   const contractFactory = await ethers.getContractFactory(name);
 
   const contract = await contractFactory.deploy(...args);
