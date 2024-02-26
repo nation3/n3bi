@@ -16,11 +16,11 @@ https://app.clarity.so/nation3-public/docs/6fdd30ab-c6e3-4faa-942f-7a7a9a0cab16
 
 ```mermaid
 sequenceDiagram
-    participant N3BI
+    participant BasicIncomeDistributor
     participant NationCred
-    N3BI->>NationCred: Is citizen active?
+    BasicIncomeDistributor->>NationCred: Is citizen active?
     activate NationCred
-    NationCred->>N3BI: Yes/No
+    NationCred->>BasicIncomeDistributor: Yes/No
 ```
 
 ### Eligibility Based on NationCred
