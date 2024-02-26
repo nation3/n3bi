@@ -33,7 +33,9 @@ describe("BasicIncomeDistributor", function () {
 
     const amountPerEnrollment = ethers.utils.parseEther("0.12");
 
-    const BasicIncomeDistributor = await ethers.getContractFactory("BasicIncomeDistributor");
+    const BasicIncomeDistributor = await ethers.getContractFactory(
+      "BasicIncomeDistributor"
+    );
     const distributor = await BasicIncomeDistributor.deploy(
       passportUtils.address,
       nationCred.address,
@@ -184,9 +186,9 @@ describe("BasicIncomeDistributor", function () {
 
       expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
       await expect(distributor.enroll()).to.emit(distributor, "Enrolled");
-      expect(await distributor.enrollmentTimestamps(owner.address)).to.be.greaterThan(
-        0
-      );
+      expect(
+        await distributor.enrollmentTimestamps(owner.address)
+      ).to.be.greaterThan(0);
       expect(await distributor.amountEnrolled()).to.equal(
         ethers.utils.parseEther("0.12")
       );
@@ -231,9 +233,9 @@ describe("BasicIncomeDistributor", function () {
       // 1st enrollment
       expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
       await expect(distributor.enroll()).to.emit(distributor, "Enrolled");
-      expect(await distributor.enrollmentTimestamps(owner.address)).to.be.greaterThan(
-        0
-      );
+      expect(
+        await distributor.enrollmentTimestamps(owner.address)
+      ).to.be.greaterThan(0);
       expect(await distributor.amountEnrolled()).to.equal(
         ethers.utils.parseEther("0.12")
       );

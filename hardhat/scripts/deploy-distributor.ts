@@ -13,7 +13,8 @@ const amountPerEnrollment = ethers.utils.parseEther("0.0033");
 
 async function main() {
   const contractName = "BasicIncomeDistributor";
-  const contractPath = "contracts/BasicIncomeDistributor.sol:BasicIncomeDistributor";
+  const contractPath =
+    "contracts/BasicIncomeDistributor.sol:BasicIncomeDistributor";
 
   // Constructor Args
   const args = [passportUtilsAddress, nationCredAddress, amountPerEnrollment];
