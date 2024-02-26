@@ -41,7 +41,7 @@ async function main() {
   const contractAddress = await deployContract(contractName, args);
   console.log(`${contractName} deployed to: ${contractAddress}`);
 
-  console.log('Waiting for 30 seconds before verifying...');
+  console.log("Waiting for 30 seconds before verifying...");
   await sleep(30_000);
 
   console.log("Contract is verifying....");
