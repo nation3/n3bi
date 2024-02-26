@@ -25,7 +25,7 @@ import "hardhat/console.sol";
  *     https://nation3.org
  */
 contract N3BI {
-    string public constant VERSION = "0.3.0";
+    string public constant VERSION = "0.4.0";
 
     address public owner;
 
