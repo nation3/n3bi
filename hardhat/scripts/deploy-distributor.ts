@@ -2,8 +2,8 @@ import { ethers } from "hardhat";
 import { verifyContract, deployContract } from "./helpers.ts";
 
 // Sepolia
-const passportUtilsAddress = "0x7Ef8C512D39547873A681242EA87881CD2b8B7B7";
-const nationCredAddress = "0x0EF98EaE3021B91Cc84E0dd59BAA35cB59981E42";
+const passportUtilsAddress = "0x68ADa619A2b806A2bEc8e3789FfBA206641c22ff";
+const nationCredAddress = "0x3C38FBe04C455eFaF762d00c400e1A6589f7269A";
 const amountPerEnrollment = ethers.utils.parseEther("0.0033");
 
 // // Mainnet
