@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { verifyContract, deployContract } from "./helpers";
+import { verifyContract, deployContract } from "./helpers.ts";
 
 // Sepolia
 const passportUtilsAddress = "0x7Ef8C512D39547873A681242EA87881CD2b8B7B7";
