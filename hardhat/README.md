@@ -32,6 +32,8 @@ npx hardhat test
 
 [![codecov](https://codecov.io/gh/nation3/n3bi/branch/main/graph/badge.svg)](https://codecov.io/gh/nation3/n3bi)
 
+[![codecov](https://codecov.io/gh/nation3/n3bi/graphs/icicle.svg)](https://codecov.io/gh/nation3/n3bi)
+
 Run code coverage:
 
 ```
