@@ -7,7 +7,7 @@ const nationCredAddress = "0x3C38FBe04C455eFaF762d00c400e1A6589f7269A";
 const amountPerEnrollment = ethers.utils.parseEther("0.0033");
 
 // // Mainnet
-// const passportUtilsAddress = "...";
+// const passportUtilsAddress = "0x23Ca3002706b71a440860E3cf8ff64679A00C9d7";
 // const nationCredAddress = "0x7794F0Eb1eA812fBcdaBD559551Fb26A79720925";
 // const amountPerEnrollment = ethers.utils.parseEther("0.0333");
 
