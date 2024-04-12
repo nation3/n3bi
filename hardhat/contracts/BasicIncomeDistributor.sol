@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.20;
 
 import "@nation3/nationcred-contracts/INationCred.sol";
@@ -29,7 +29,7 @@ contract BasicIncomeDistributor {
 
     address public owner;
 
-    /// The smart contract used for checking if a citizens holds a valid passport.
+    /// The smart contract used for checking if a citizen holds a valid passport.
     IPassportUtils public passportUtils;
 
     /// The smart contract used for checking if a Nation3 citizen is active.
