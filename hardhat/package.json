@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/nation3/n3bi#readme",
   "devDependencies": {
-    "@nation3/nationcred-contracts": "^0.6.8",
+    "@nation3/nationcred-contracts": "^0.7.0",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^3.1.7",
