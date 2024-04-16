@@ -45,6 +45,7 @@ contract BasicIncomeDistributor {
     mapping(address => uint256) public enrollmentTimestamps;
 
     event Enrolled(address citizen);
+    event RewardClaimed(address citizen, uint256 amount);
     event AmountPerEnrollmentUpdated(uint256 newAmount);
 
     error NotEligibleError(address citizen);
@@ -189,17 +190,24 @@ contract BasicIncomeDistributor {
         uint256 claimableAmount = _getClaimableAmount(msg.sender);
         require(claimableAmount > 0, "There is no reward to claim.");
         console.log("claimableAmount:", claimableAmount);
+        //TODO: Mark as claimed, then transfer
         //ERC20(address(this)).transfer(msg.sender, claimableAmount);
     }
 
-    function _getClaimableAmount(address citizen) internal view returns (uint256) {
-      // TODO: Calculate number of tokens
-      uint256 claimableAmount = 0;
+    function _getClaimableAmount(
+        address citizen
+    ) internal view returns (uint256) {
+        // TODO: Calculate number of tokens
+        uint256 claimableAmount = 0;
 
-      //TODO: calculate claimable amount
-      claimableAmount = 0;
+        uint256 enrollmentDuration = block.timestamp -
+            enrollmentTimestamps[citizen];
+        //TODO: Check overflow
+        claimableAmount = (enrollmentDuration / 365 days) * amountPerEnrollment;
+        enrollmentTimestamps[msg.sender] = block.timestamp;
+        emit RewardClaimed(msg.sender, claimableAmount);
 
-      return claimableAmount;
+        return claimableAmount;
     }
 
     /// Public function for user
