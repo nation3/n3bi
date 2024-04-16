@@ -71,7 +71,9 @@ describe("BasicIncomeDistributor", function () {
     it("address is not passport owner", async function () {
       const { distributor, owner } = await loadFixture(deployFixture);
 
-      expect(await distributor.isEligibleToEnroll(owner.address)).to.equal(false);
+      expect(await distributor.isEligibleToEnroll(owner.address)).to.equal(
+        false
+      );
     });
 
     // TO DO:  address is passport owner, but passport has expired
@@ -103,7 +105,9 @@ describe("BasicIncomeDistributor", function () {
         ethers.BigNumber.from(lockEndInSeconds)
       );
 
-      expect(await distributor.isEligibleToEnroll(owner.address)).to.equal(false);
+      expect(await distributor.isEligibleToEnroll(owner.address)).to.equal(
+        false
+      );
     });
 
     it("address is owner of valid passport, and nationcred is active", async function () {
@@ -133,7 +137,9 @@ describe("BasicIncomeDistributor", function () {
       const passportID = 0;
       await nationCred.setActiveCitizens([passportID]);
 
-      expect(await distributor.isEligibleToEnroll(owner.address)).to.equal(true);
+      expect(await distributor.isEligibleToEnroll(owner.address)).to.equal(
+        true
+      );
     });
   });
 
