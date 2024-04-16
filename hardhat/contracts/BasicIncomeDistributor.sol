@@ -191,6 +191,8 @@ contract BasicIncomeDistributor {
         require(claimableAmount > 0, "There is no reward to claim.");
         console.log("claimableAmount:", claimableAmount);
         //TODO: Mark as claimed, then transfer
+        enrollmentTimestamps[msg.sender] = block.timestamp;
+        emit RewardClaimed(msg.sender, claimableAmount);
         //ERC20(address(this)).transfer(msg.sender, claimableAmount);
     }
 
@@ -204,8 +206,6 @@ contract BasicIncomeDistributor {
             enrollmentTimestamps[citizen];
         //TODO: Check overflow
         claimableAmount = (enrollmentDuration / 365 days) * amountPerEnrollment;
-        enrollmentTimestamps[msg.sender] = block.timestamp;
-        emit RewardClaimed(msg.sender, claimableAmount);
 
         return claimableAmount;
     }
