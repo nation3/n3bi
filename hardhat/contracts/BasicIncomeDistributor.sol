@@ -90,8 +90,8 @@ contract BasicIncomeDistributor {
     }
 
     /// Checks if a Nation3 citizen is eligible to enroll for Basic Income.
-    function isEligible(address citizen) public view returns (bool) {
-        console.log("isEligible");
+    function isEligibleToEnroll(address citizen) public view returns (bool) {
+        console.log("isEligibleToEnroll");
 
         // The account owns the passport NFT
         if (!passportUtils.isOwner(citizen)) {
@@ -132,7 +132,7 @@ contract BasicIncomeDistributor {
     function enroll() public {
         console.log("enroll");
 
-        if (!isEligible(msg.sender)) {
+        if (!isEligibleToEnroll(msg.sender)) {
             revert NotEligibleError(msg.sender);
         }
         console.log(unicode"✅ The citizen is eligible for enrollment");
