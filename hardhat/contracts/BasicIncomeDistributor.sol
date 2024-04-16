@@ -146,6 +146,24 @@ contract BasicIncomeDistributor {
             );
         }
 
+    /// Once eligible, the citizen can enroll for Basic Income, as long as the smart contract contains enough funding for covering one additional citizen's Basic Income for the duration of 1 year.
+    function enroll() public {
+        console.log("enroll");
+
+        if (!isEligibleToEnroll(msg.sender)) {
+            revert NotEligibleError(msg.sender);
+        }
+        console.log(unicode"✅ The citizen is eligible for enrollment");
+
+        uint256 oneYearAgo = block.timestamp - 365 days;
+        console.log("oneYearAgo:", oneYearAgo);
+        if (enrollmentTimestamps[msg.sender] > oneYearAgo) {
+            revert CurrentlyEnrolledError(
+                msg.sender,
+                enrollmentTimestamps[msg.sender]
+            );
+        }
+
         uint256 amountAvailable = address(this).balance - amountEnrolled;
         console.log("amountAvailable:", amountAvailable);
         if (amountAvailable < amountPerEnrollment) {
@@ -185,6 +203,93 @@ contract BasicIncomeDistributor {
         }
         console.log(unicode"✅ The citizen is eligible for claiming");
 
-        // TO DO
+        // TODO:
+        uint256 claimableAmount = _getClaimableAmount(msg.sender);
+        require(claimableAmount > 0, "There is no reward to claim.");
+        console.log("claimableAmount:", claimableAmount);
+        ERC20(address(this)).transfer(msg.sender, claimableAmount);
+    }
+
+    function _getClaimableAmount(address citizen) returns (uint256) {
+      // TODO: Calculate number of tokens
+      uint256 claimableAmount = 0;
+
+      //TODO: calculate claimable amount
+      claimableAmount = 1;
+
+      return claimableAmount;
+    }
+
+    /// Public function for user
+    function getClaimableAmount(address citizen) public view returns (uint256) {
+        console.log("getClaimableAmount");
+        if !isEligibleToClaim(citizen) {
+            revert NotEligibleError(msg.sender);
+        }
+        return _getClaimableAmount(citizen);
+    }
+        uint256 amountAvailable = address(this).balance - amountEnrolled;
+        console.log("amountAvailable:", amountAvailable);
+        if (amountAvailable < amountPerEnrollment) {
+            revert NotEnoughFunding(amountAvailable, amountPerEnrollment);
+        }
+
+        amountEnrolled += amountPerEnrollment;
+        enrollmentTimestamps[msg.sender] = block.timestamp;
+        emit Enrolled(msg.sender);
+    }
+
+    /// Checks if a Nation3 citizen is eligible to claim Basic Income.
+    function isEligibleToClaim(address citizen) public view returns (bool) {
+        console.log("isEligibleToClaim");
+
+        // The account owns the passport NFT
+        if (!passportUtils.isOwner(citizen)) {
+            return false;
+        }
+        console.log(unicode"✅ The account owns the passport NFT");
+
+        // The passport has not yet expired
+        if (passportUtils.isExpired(citizen)) {
+            return false;
+        }
+        console.log(unicode"✅ The passport has not yet expired");
+
+        return true;
+    }
+
+    /// Once enrolled, citizens can claim their earned Basic Income at any time.
+    function claim() public {
+        console.log("claim");
+
+        if (!isEligibleToClaim(msg.sender)) {
+            revert NotEligibleError(msg.sender);
+        }
+        console.log(unicode"✅ The citizen is eligible for claiming");
+
+        // TODO:
+        uint256 claimableAmount = _getClaimableAmount(msg.sender);
+        require(claimableAmount > 0, "There is no reward to claim.");
+        console.log("claimableAmount:", claimableAmount);
+        ERC20(address(this)).transfer(msg.sender, claimableAmount);
+    }
+
+    function _getClaimableAmount(address citizen) private returns (uint256) {
+      // TODO: Calculate number of tokens
+      uint256 claimableAmount = 0;
+
+      //TODO: calculate claimable amount
+      claimableAmount = 1;
+
+      return claimableAmount;
+    }
+
+    /// Public function for user
+    function getClaimableAmount(address citizen) public view returns (uint256) {
+        console.log("getClaimableAmount");
+        if !isEligibleToClaim(citizen) {
+            revert NotEligibleError(msg.sender);
+        }
+        return _getClaimableAmount(citizen);
     }
 }
