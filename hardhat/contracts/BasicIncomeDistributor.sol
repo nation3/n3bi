@@ -157,9 +157,34 @@ contract BasicIncomeDistributor {
         emit Enrolled(msg.sender);
     }
 
+    /// Checks if a Nation3 citizen is eligible to claim Basic Income.
+    function isEligibleToClaim(address citizen) public view returns (bool) {
+        console.log("isEligibleToClaim");
+
+        // The account owns the passport NFT
+        if (!passportUtils.isOwner(citizen)) {
+            return false;
+        }
+        console.log(unicode"✅ The account owns the passport NFT");
+
+        // The passport has not yet expired
+        if (passportUtils.isExpired(citizen)) {
+            return false;
+        }
+        console.log(unicode"✅ The passport has not yet expired");
+
+        return true;
+    }
+
     /// Once enrolled, citizens can claim their earned Basic Income at any time.
     function claim() public {
         console.log("claim");
+
+        if (!isEligibleToClaim(msg.sender)) {
+            revert NotEligibleError(msg.sender);
+        }
+        console.log(unicode"✅ The citizen is eligible for claiming");
+
         // TO DO
     }
 }
