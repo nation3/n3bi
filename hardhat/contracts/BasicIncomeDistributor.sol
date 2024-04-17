@@ -3,6 +3,7 @@ pragma solidity ^0.8.25;
 
 import "@nation3/nationcred-contracts/INationCred.sol";
 import "@nation3/nationcred-contracts/utils/IPassportUtils.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "hardhat/console.sol";
 
 /**
@@ -43,10 +44,13 @@ contract BasicIncomeDistributor {
 
     /// The timestamp of each citizen's most recent enrollment.
     mapping(address => uint256) public enrollmentTimestamps;
+    mapping(address => uint256) public latestClaimTimestamps;
 
     event Enrolled(address citizen);
     event RewardClaimed(address citizen, uint256 amount);
     event AmountPerEnrollmentUpdated(uint256 newAmount);
+
+    IERC20 public token;
 
     error NotEligibleError(address citizen);
     error CurrentlyEnrolledError(address citizen, uint256 enrollmentTimestamp);
@@ -55,7 +59,9 @@ contract BasicIncomeDistributor {
     constructor(
         address passportUtilsAddress,
         address nationCredAddress,
+        address rewardToken,
         uint256 amountPerEnrollment_
+
     ) {
         console.log("Deploying BasicIncomeDistributor");
         console.log("passportUtilsAddress:", passportUtilsAddress);
@@ -64,6 +70,7 @@ contract BasicIncomeDistributor {
         owner = address(msg.sender);
         passportUtils = IPassportUtils(passportUtilsAddress);
         nationCred = INationCred(nationCredAddress);
+        token = IERC20(rewardToken);
         amountPerEnrollment = amountPerEnrollment_;
     }
 
@@ -186,28 +193,29 @@ contract BasicIncomeDistributor {
         }
         console.log(unicode"✅ The citizen is eligible for claiming");
 
-        // TODO:
         uint256 claimableAmount = _getClaimableAmount(msg.sender);
         require(claimableAmount > 0, "There is no reward to claim.");
         console.log("claimableAmount:", claimableAmount);
-        //TODO: Mark as claimed, then transfer
-        enrollmentTimestamps[msg.sender] = block.timestamp;
+
+        //Update latest claim timestamp
+        latestClaimTimestamps[msg.sender] = block.timestamp;
         emit RewardClaimed(msg.sender, claimableAmount);
-        //ERC20(address(this)).transfer(msg.sender, claimableAmount);
+
+        // Transfer token to recipient
+        bool success = token.transfer(msg.sender, claimableAmount);
+        require(success, "transfer failed");
     }
 
     function _getClaimableAmount(
         address citizen
     ) internal view returns (uint256) {
-        // TODO: Calculate number of tokens
-        uint256 claimableAmount = 0;
+        uint256 latestClaimTimestamp = latestClaimTimestamps[citizen];
+        uint256 enrollmentDuration = latestClaimTimestamp == 0
+            ? block.timestamp - enrollmentTimestamps[citizen]
+            : block.timestamp - latestClaimTimestamp;
 
-        uint256 enrollmentDuration = block.timestamp -
-            enrollmentTimestamps[citizen];
-        //TODO: Check overflow
-        claimableAmount = (enrollmentDuration / 365 days) * amountPerEnrollment;
-
-        return claimableAmount;
+        uint256 daysSinceLastClaim = enrollmentDuration / 365 days;
+        return daysSinceLastClaim * amountPerEnrollment;
     }
 
     /// Public function for user
