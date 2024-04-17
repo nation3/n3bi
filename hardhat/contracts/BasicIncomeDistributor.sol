@@ -45,7 +45,7 @@ contract BasicIncomeDistributor {
     mapping(address => uint256) public latestClaimTimestamps;
 
     event Enrolled(address citizen);
-    event IncomeClaimed(address citizen, uint256 amount);
+    event Claimed(address citizen, uint256 amount);
     event AmountPerEnrollmentUpdated(uint256 newAmount);
 
     error NotEligibleError(address citizen);
@@ -154,23 +154,7 @@ contract BasicIncomeDistributor {
         return true;
     }
 
-    /// Once enrolled, citizens can claim their earned Basic Income at any time.
-    function claim(address payable beneficial) public {
-        if (!isEligibleToClaim(msg.sender)) {
-            revert NotEligibleError(msg.sender);
-        }
-
-        uint256 claimableAmount = getClaimableAmount(msg.sender);
-        require(claimableAmount > 0, "There is no reward to claim.");
-
-        // Transfer token to recipient
-        beneficial.transfer(claimableAmount);
-
-        //Update latest claim timestamp
-        latestClaimTimestamps[msg.sender] = block.timestamp;
-        emit IncomeClaimed(msg.sender, claimableAmount);
-    }
-
+    /// Calculate the amount that an enrolled citizen can claim
     function getClaimableAmount(address citizen) public view returns (uint256) {
         uint256 latestClaimTimestamp = latestClaimTimestamps[citizen];
         uint256 enrollmentDuration = latestClaimTimestamp == 0
@@ -179,5 +163,22 @@ contract BasicIncomeDistributor {
 
         uint256 daysSinceLastClaim = enrollmentDuration / 365 days;
         return daysSinceLastClaim * amountPerEnrollment;
+    }
+
+    /// Once enrolled, citizens can claim their earned Basic Income at any time.
+    function claim() public {
+        if (!isEligibleToClaim(msg.sender)) {
+            revert NotEligibleError(msg.sender);
+        }
+
+        uint256 claimableAmount = getClaimableAmount(msg.sender);
+        require(claimableAmount > 0, "There is no reward to claim.");
+
+        // Distribute income to citizen
+        payable(msg.sender).transfer(claimableAmount);
+
+        // Update latest claim timestamp
+        latestClaimTimestamps[msg.sender] = block.timestamp;
+        emit Claimed(msg.sender, claimableAmount);
     }
 }
