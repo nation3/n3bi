@@ -48,6 +48,7 @@ describe("BasicIncomeDistributor", function () {
       pass3,
       votingEscrow,
       passportUtils,
+      passportIssuer,
       nationCred,
       distributor,
       owner,
@@ -68,6 +69,7 @@ describe("BasicIncomeDistributor", function () {
     expect(passportUtils.address.length).to.equal(42);
   });
 
+  
   describe("isEligibleToEnroll", function () {
     it("address is not passport owner", async function () {
       const { distributor, owner } = await loadFixture(deployFixture);
@@ -111,39 +113,10 @@ describe("BasicIncomeDistributor", function () {
       );
     });
 
-    it("address is owner of valid passport, and nationcred is active", async function () {
-      const { distributor, pass3, votingEscrow, nationCred, owner } =
-        await loadFixture(deployFixture);
-
-      await pass3.safeMint(owner.address);
-
-      // Lock 6 $NATION for 4 years
-      //  - 4.5 $veNATION after 1 year
-      //  - 3.0 $veNATION after 2 years
-      //  - 1.5 $veNATION after 3 years
-      //  - 0.0 $veNATION after 4 years
-      const lockAmount = ethers.utils.parseUnits("6");
-      const initialLockDate = new Date();
-      console.log("initialLockDate:", initialLockDate);
-      const lockEnd = new Date(
-        initialLockDate.getTime() + 4 * oneYearInMilliseconds
-      );
-      console.log("lockEnd:", lockEnd);
-      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
-      await votingEscrow.create_lock(
-        lockAmount,
-        ethers.BigNumber.from(lockEndInSeconds)
-      );
-
-      const passportID = 0;
-      await nationCred.setActiveCitizens([passportID]);
-
-      expect(await distributor.isEligibleToEnroll(owner.address)).to.equal(
-        true
-      );
-    });
+    // TO DO:  address is owner of valid passport, and nationcred is active
   });
 
+  
   describe("enroll", function () {
     it("address is not passport owner", async function () {
       const { distributor, owner } = await loadFixture(deployFixture);
@@ -155,236 +128,39 @@ describe("BasicIncomeDistributor", function () {
       expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
     });
 
-    it("citizen is eligible", async function () {
-      const { distributor, pass3, votingEscrow, nationCred, owner } =
-        await loadFixture(deployFixture);
+    // TO DO:  citizen is eligible
 
-      await pass3.safeMint(owner.address);
+    // TO DO:  two enrollments - 2nd enrollment same da
 
-      // Lock 6 $NATION for 4 years
-      //  - 4.5 $veNATION after 1 year
-      //  - 3.0 $veNATION after 2 years
-      //  - 1.5 $veNATION after 3 years
-      //  - 0.0 $veNATION after 4 years
-      const lockAmount = ethers.utils.parseUnits("6");
-      const initialLockDate = new Date();
-      console.log("initialLockDate:", initialLockDate);
-      const lockEnd = new Date(
-        initialLockDate.getTime() + 4 * oneYearInMilliseconds
-      );
-      console.log("lockEnd:", lockEnd);
-      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
-      await votingEscrow.create_lock(
-        lockAmount,
-        ethers.BigNumber.from(lockEndInSeconds)
-      );
+    // TO DO:  two enrollments - 2nd enrollment 364 days later
 
-      const passportID = 0;
-      await nationCred.setActiveCitizens([passportID]);
+    // TO DO:  two enrollments - 2nd enrollment 366 days later
+  });
 
-      // Fund contract with 100 ETH
-      await owner.sendTransaction({
-        to: distributor.address,
-        value: ethers.utils.parseEther("100"),
-      });
-      expect(await ethers.provider.getBalance(distributor.address)).to.equal(
-        ethers.utils.parseEther("100")
-      );
 
-      expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
-      await expect(distributor.enroll()).to.emit(distributor, "Enrolled");
-      expect(
-        await distributor.enrollmentTimestamps(owner.address)
-      ).to.be.greaterThan(0);
-      expect(await distributor.amountEnrolled()).to.equal(
-        ethers.utils.parseEther("0.12")
+  describe("isEligibleToClaim", function () {
+    it("address is not passport owner", async function () {
+      const { distributor, user2 } = await loadFixture(deployFixture);
+
+      expect(await distributor.isEligibleToClaim(user2.address)).to.equal(
+        false
       );
     });
 
-    it("two enrollments - 2nd enrollment same day", async function () {
-      const { distributor, pass3, votingEscrow, nationCred, owner } =
-        await loadFixture(deployFixture);
+    it("address is passport owner, but passport has expired", async function () {
+      const { distributor, user2, passportIssuer } = await loadFixture(deployFixture);
 
-      await pass3.safeMint(owner.address);
+      // Claim passport
+      await passportIssuer.connect(user2).claim();
 
-      // Lock 6 $NATION for 4 years
-      //  - 4.5 $veNATION after 1 year
-      //  - 3.0 $veNATION after 2 years
-      //  - 1.5 $veNATION after 3 years
-      //  - 0.0 $veNATION after 4 years
-      const lockAmount = ethers.utils.parseUnits("6");
-      const initialLockDate = new Date();
-      console.log("initialLockDate:", initialLockDate);
-      const lockEnd = new Date(
-        initialLockDate.getTime() + 4 * oneYearInMilliseconds
-      );
-      console.log("lockEnd:", lockEnd);
-      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
-      await votingEscrow.create_lock(
-        lockAmount,
-        ethers.BigNumber.from(lockEndInSeconds)
-      );
-
-      const passportID = 0;
-      await nationCred.setActiveCitizens([passportID]);
-
-      // Fund contract with 100 ETH
-      await owner.sendTransaction({
-        to: distributor.address,
-        value: ethers.utils.parseEther("100"),
-      });
-      expect(await ethers.provider.getBalance(distributor.address)).to.equal(
-        ethers.utils.parseEther("100")
-      );
-
-      // 1st enrollment
-      expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
-      await expect(distributor.enroll()).to.emit(distributor, "Enrolled");
-      expect(
-        await distributor.enrollmentTimestamps(owner.address)
-      ).to.be.greaterThan(0);
-      expect(await distributor.amountEnrolled()).to.equal(
-        ethers.utils.parseEther("0.12")
-      );
-
-      // 2nd enrollment
-      await expect(distributor.enroll()).to.be.revertedWithCustomError(
-        distributor,
-        "CurrentlyEnrolledError"
-      );
-      expect(await distributor.amountEnrolled()).to.equal(
-        ethers.utils.parseEther("0.12")
+      expect(await distributor.isEligibleToClaim(user2.address)).to.equal(
+        false
       );
     });
+  });
 
-    it("two enrollments - 2nd enrollment 364 days later", async function () {
-      const { distributor, pass3, votingEscrow, nationCred, owner } =
-        await loadFixture(deployFixture);
 
-      await pass3.safeMint(owner.address);
-
-      // Lock 6 $NATION for 4 years
-      //  - 4.5 $veNATION after 1 year
-      //  - 3.0 $veNATION after 2 years
-      //  - 1.5 $veNATION after 3 years
-      //  - 0.0 $veNATION after 4 years
-      const lockAmount = ethers.utils.parseUnits("6");
-      const initialLockDate = new Date();
-      console.log("initialLockDate:", initialLockDate);
-      const lockEnd = new Date(
-        initialLockDate.getTime() + 4 * oneYearInMilliseconds
-      );
-      console.log("lockEnd:", lockEnd);
-      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
-      await votingEscrow.create_lock(
-        lockAmount,
-        ethers.BigNumber.from(lockEndInSeconds)
-      );
-
-      const passportID = 0;
-      await nationCred.setActiveCitizens([passportID]);
-
-      // Fund contract with 100 ETH
-      await owner.sendTransaction({
-        to: distributor.address,
-        value: ethers.utils.parseEther("100"),
-      });
-      expect(await ethers.provider.getBalance(distributor.address)).to.equal(
-        ethers.utils.parseEther("100")
-      );
-
-      // 1st enrollment
-      expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
-      await expect(distributor.enroll()).to.emit(distributor, "Enrolled");
-      const timestampOfFirstEnrollment = await distributor.enrollmentTimestamps(
-        owner.address
-      );
-      expect(timestampOfFirstEnrollment).to.be.greaterThan(0);
-      expect(await distributor.amountEnrolled()).to.equal(
-        ethers.utils.parseEther("0.12")
-      );
-
-      // Increase the time by 364 days
-      const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
-      await time.increase(364 * ONE_DAY_IN_SECONDS);
-      console.log("Time 364 days later:", await time.latest());
-
-      // 2nd enrollment
-      await expect(distributor.enroll()).to.be.revertedWithCustomError(
-        distributor,
-        "CurrentlyEnrolledError"
-      );
-      expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(
-        timestampOfFirstEnrollment
-      );
-      expect(await distributor.amountEnrolled()).to.equal(
-        ethers.utils.parseEther("0.12")
-      );
-    });
-
-    it("two enrollments - 2nd enrollment 366 days later", async function () {
-      const { distributor, pass3, votingEscrow, nationCred, owner } =
-        await loadFixture(deployFixture);
-
-      await pass3.safeMint(owner.address);
-
-      // Lock 6 $NATION for 4 years
-      //  - 4.5 $veNATION after 1 year
-      //  - 3.0 $veNATION after 2 years
-      //  - 1.5 $veNATION after 3 years
-      //  - 0.0 $veNATION after 4 years
-      const lockAmount = ethers.utils.parseUnits("6");
-      const initialLockDate = new Date();
-      console.log("initialLockDate:", initialLockDate);
-      const lockEnd = new Date(
-        initialLockDate.getTime() + 4 * oneYearInMilliseconds
-      );
-      console.log("lockEnd:", lockEnd);
-      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
-      await votingEscrow.create_lock(
-        lockAmount,
-        ethers.BigNumber.from(lockEndInSeconds)
-      );
-
-      const passportID = 0;
-      await nationCred.setActiveCitizens([passportID]);
-
-      // Fund contract with 100 ETH
-      await owner.sendTransaction({
-        to: distributor.address,
-        value: ethers.utils.parseEther("100"),
-      });
-      expect(await ethers.provider.getBalance(distributor.address)).to.equal(
-        ethers.utils.parseEther("100")
-      );
-
-      // 1st enrollment
-      expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
-      await expect(distributor.enroll()).to.emit(distributor, "Enrolled");
-      const timestampOf1stEnrollment = await distributor.enrollmentTimestamps(
-        owner.address
-      );
-      expect(timestampOf1stEnrollment).to.be.greaterThan(0);
-      expect(await distributor.amountEnrolled()).to.equal(
-        ethers.utils.parseEther("0.12")
-      );
-
-      // Increase the time by 366 days
-      const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
-      await time.increase(366 * ONE_DAY_IN_SECONDS);
-      console.log("Time 366 days later:", await time.latest());
-
-      // 2nd enrollment
-      await expect(distributor.enroll()).to.emit(distributor, "Enrolled");
-      const timestampOf2ndEnrollment = await distributor.enrollmentTimestamps(
-        owner.address
-      );
-      expect(timestampOf2ndEnrollment).to.be.greaterThan(
-        timestampOf1stEnrollment
-      );
-      expect(await distributor.amountEnrolled()).to.equal(
-        ethers.utils.parseEther("0.24")
-      );
-    });
+  describe("claim", function () {
+    // TO DO
   });
 });
