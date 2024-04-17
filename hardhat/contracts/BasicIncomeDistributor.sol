@@ -47,7 +47,7 @@ contract BasicIncomeDistributor {
     mapping(address => uint256) public latestClaimTimestamps;
 
     event Enrolled(address citizen);
-    event RewardClaimed(address citizen, uint256 amount);
+    event IncomeClaimed(address citizen, uint256 amount);
     event AmountPerEnrollmentUpdated(uint256 newAmount);
 
     IERC20 public token;
