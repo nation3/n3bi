@@ -205,9 +205,7 @@ contract BasicIncomeDistributor {
         require(success, "transfer failed");
     }
 
-    function getClaimableAmount(
-        address citizen
-    ) public view returns (uint256) {
+    function getClaimableAmount(address citizen) public view returns (uint256) {
         uint256 latestClaimTimestamp = latestClaimTimestamps[citizen];
         uint256 enrollmentDuration = latestClaimTimestamp == 0
             ? block.timestamp - enrollmentTimestamps[citizen]
