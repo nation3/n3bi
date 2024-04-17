@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 
 const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1_000;
 
-describe("BasicIncomeDistributor", function () {
+describe("BasicIncomeDistributor", function() {
   async function deployFixture() {
     const [owner, otherAccount, user1, user2, user3] =
       await ethers.getSigners();
@@ -36,9 +36,13 @@ describe("BasicIncomeDistributor", function () {
     const BasicIncomeDistributor = await ethers.getContractFactory(
       "BasicIncomeDistributor"
     );
+
+    const Nation3Mock = await ethers.getContractFactory("Nation3Mock");
+    const nation3Mock = await Nation3Mock.deploy();
     const distributor = await BasicIncomeDistributor.deploy(
       passportUtils.address,
       nationCred.address,
+      nation3Mock.address,
       amountPerEnrollment
     );
     await distributor.deployed();
@@ -57,7 +61,7 @@ describe("BasicIncomeDistributor", function () {
     };
   }
 
-  it("Should deploy contract", async function () {
+  it("Should deploy contract", async function() {
     const { distributor, passportUtils } = await loadFixture(deployFixture);
 
     expect(distributor.address).to.not.equal(undefined);
@@ -67,8 +71,8 @@ describe("BasicIncomeDistributor", function () {
     expect(passportUtils.address.length).to.equal(42);
   });
 
-  describe("isEligibleToEnroll", function () {
-    it("address is not passport owner", async function () {
+  describe("isEligibleToEnroll", function() {
+    it("address is not passport owner", async function() {
       const { distributor, owner } = await loadFixture(deployFixture);
 
       expect(await distributor.isEligibleToEnroll(owner.address)).to.equal(
@@ -80,7 +84,7 @@ describe("BasicIncomeDistributor", function () {
 
     // TO DO:  address is passport owner, but passport will expire within the next year
 
-    it("address is owner of valid passport, but nationcred is not active", async function () {
+    it("address is owner of valid passport, but nationcred is not active", async function() {
       const { distributor, pass3, votingEscrow, owner } = await loadFixture(
         deployFixture
       );
@@ -110,7 +114,7 @@ describe("BasicIncomeDistributor", function () {
       );
     });
 
-    it("address is owner of valid passport, and nationcred is active", async function () {
+    it("address is owner of valid passport, and nationcred is active", async function() {
       const { distributor, pass3, votingEscrow, nationCred, owner } =
         await loadFixture(deployFixture);
 
@@ -143,8 +147,8 @@ describe("BasicIncomeDistributor", function () {
     });
   });
 
-  describe("enroll", function () {
-    it("address is not passport owner", async function () {
+  describe("enroll", function() {
+    it("address is not passport owner", async function() {
       const { distributor, owner } = await loadFixture(deployFixture);
 
       await expect(distributor.enroll()).to.be.revertedWithCustomError(
@@ -154,7 +158,7 @@ describe("BasicIncomeDistributor", function () {
       expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
     });
 
-    it("citizen is eligible", async function () {
+    it("citizen is eligible", async function() {
       const { distributor, pass3, votingEscrow, nationCred, owner } =
         await loadFixture(deployFixture);
 
@@ -200,7 +204,7 @@ describe("BasicIncomeDistributor", function () {
       );
     });
 
-    it("two enrollments - 2nd enrollment same day", async function () {
+    it("two enrollments - 2nd enrollment same day", async function() {
       const { distributor, pass3, votingEscrow, nationCred, owner } =
         await loadFixture(deployFixture);
 
@@ -256,7 +260,7 @@ describe("BasicIncomeDistributor", function () {
       );
     });
 
-    it("two enrollments - 2nd enrollment 364 days later", async function () {
+    it("two enrollments - 2nd enrollment 364 days later", async function() {
       const { distributor, pass3, votingEscrow, nationCred, owner } =
         await loadFixture(deployFixture);
 
@@ -321,7 +325,7 @@ describe("BasicIncomeDistributor", function () {
       );
     });
 
-    it("two enrollments - 2nd enrollment 366 days later", async function () {
+    it("two enrollments - 2nd enrollment 366 days later", async function() {
       const { distributor, pass3, votingEscrow, nationCred, owner } =
         await loadFixture(deployFixture);
 
