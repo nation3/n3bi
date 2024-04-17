@@ -192,22 +192,22 @@ contract BasicIncomeDistributor {
         }
         console.log(unicode"✅ The citizen is eligible for claiming");
 
-        uint256 claimableAmount = _getClaimableAmount(msg.sender);
+        uint256 claimableAmount = getClaimableAmount(msg.sender);
         require(claimableAmount > 0, "There is no reward to claim.");
         console.log("claimableAmount:", claimableAmount);
 
         //Update latest claim timestamp
         latestClaimTimestamps[msg.sender] = block.timestamp;
-        emit RewardClaimed(msg.sender, claimableAmount);
+        emit IncomeClaimed(msg.sender, claimableAmount);
 
         // Transfer token to recipient
         bool success = token.transfer(msg.sender, claimableAmount);
         require(success, "transfer failed");
     }
 
-    function _getClaimableAmount(
+    function getClaimableAmount(
         address citizen
-    ) internal view returns (uint256) {
+    ) public view returns (uint256) {
         uint256 latestClaimTimestamp = latestClaimTimestamps[citizen];
         uint256 enrollmentDuration = latestClaimTimestamp == 0
             ? block.timestamp - enrollmentTimestamps[citizen]
@@ -215,15 +215,5 @@ contract BasicIncomeDistributor {
 
         uint256 daysSinceLastClaim = enrollmentDuration / 365 days;
         return daysSinceLastClaim * amountPerEnrollment;
-    }
-
-    /// Public function for user
-    function getClaimableAmount(address citizen) public view returns (uint256) {
-        console.log("getClaimableAmount");
-        if (!isEligibleToClaim(citizen)) {
-            revert NotEligibleError(msg.sender);
-        }
-        uint256 claimableAmount = _getClaimableAmount(citizen);
-        return claimableAmount;
     }
 }
