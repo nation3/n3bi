@@ -61,7 +61,6 @@ contract BasicIncomeDistributor {
         address nationCredAddress,
         address rewardToken,
         uint256 amountPerEnrollment_
-
     ) {
         console.log("Deploying BasicIncomeDistributor");
         console.log("passportUtilsAddress:", passportUtilsAddress);
