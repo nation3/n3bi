@@ -84,11 +84,12 @@ describe("BasicIncomeDistributor", function () {
     // TO DO:  address is passport owner, but passport will expire within the next year
 
     it("address is owner of valid passport, but nationcred is not active", async function () {
-      const { distributor, pass3, votingEscrow, owner } = await loadFixture(
+      const { distributor, passportIssuer, votingEscrow, owner } = await loadFixture(
         deployFixture
       );
 
-      await pass3.safeMint(owner.address);
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
 
       // Lock 6 $NATION for 4 years
       //  - 4.5 $veNATION after 1 year
