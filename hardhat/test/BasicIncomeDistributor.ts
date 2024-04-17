@@ -78,7 +78,16 @@ describe("BasicIncomeDistributor", function () {
       );
     });
 
-    // TO DO:  address is passport owner, but passport has expired
+    it("address is passport owner, but passport has expired", async function () {
+      const { distributor, passportIssuer, otherAccount } = await loadFixture(deployFixture);
+
+      // Claim passport
+      await passportIssuer.connect(otherAccount).claim();
+
+      expect(await distributor.isEligibleToEnroll(otherAccount.address)).to.equal(
+        false
+      );
+    });
 
     // TO DO:  address is passport owner, but passport will expire within the next year
 
