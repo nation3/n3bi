@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { ethers } from "hardhat";
 
 const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1_000;
@@ -69,7 +69,6 @@ describe("BasicIncomeDistributor", function () {
     expect(passportUtils.address.length).to.equal(42);
   });
 
-  
   describe("isEligibleToEnroll", function () {
     it("address is not passport owner", async function () {
       const { distributor, owner } = await loadFixture(deployFixture);
@@ -84,9 +83,8 @@ describe("BasicIncomeDistributor", function () {
     // TO DO:  address is passport owner, but passport will expire within the next year
 
     it("address is owner of valid passport, but nationcred is not active", async function () {
-      const { distributor, passportIssuer, votingEscrow, owner } = await loadFixture(
-        deployFixture
-      );
+      const { distributor, passportIssuer, votingEscrow, owner } =
+        await loadFixture(deployFixture);
 
       // Claim passport
       await passportIssuer.connect(owner).claim();
@@ -117,7 +115,6 @@ describe("BasicIncomeDistributor", function () {
     // TO DO:  address is owner of valid passport, and nationcred is active
   });
 
-  
   describe("enroll", function () {
     it("address is not passport owner", async function () {
       const { distributor, owner } = await loadFixture(deployFixture);
@@ -138,7 +135,6 @@ describe("BasicIncomeDistributor", function () {
     // TO DO:  two enrollments - 2nd enrollment 366 days later
   });
 
-
   describe("isEligibleToClaim", function () {
     it("address is not passport owner", async function () {
       const { distributor, user2 } = await loadFixture(deployFixture);
@@ -149,7 +145,9 @@ describe("BasicIncomeDistributor", function () {
     });
 
     it("address is passport owner, but passport has expired", async function () {
-      const { distributor, user2, passportIssuer } = await loadFixture(deployFixture);
+      const { distributor, user2, passportIssuer } = await loadFixture(
+        deployFixture
+      );
 
       // Claim passport
       await passportIssuer.connect(user2).claim();
@@ -159,7 +157,6 @@ describe("BasicIncomeDistributor", function () {
       );
     });
   });
-
 
   describe("claim", function () {
     // TO DO
