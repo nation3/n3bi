@@ -37,12 +37,9 @@ describe("BasicIncomeDistributor", function () {
       "BasicIncomeDistributor"
     );
 
-    const Nation3Mock = await ethers.getContractFactory("Nation3Mock");
-    const nation3Mock = await Nation3Mock.deploy();
     const distributor = await BasicIncomeDistributor.deploy(
       passportUtils.address,
       nationCred.address,
-      nation3Mock.address,
       amountPerEnrollment
     );
     await distributor.deployed();

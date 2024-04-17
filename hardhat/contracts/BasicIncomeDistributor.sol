@@ -3,7 +3,6 @@ pragma solidity ^0.8.25;
 
 import "@nation3/nationcred-contracts/INationCred.sol";
 import "@nation3/nationcred-contracts/utils/IPassportUtils.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "hardhat/console.sol";
 
 /**
@@ -50,8 +49,6 @@ contract BasicIncomeDistributor {
     event IncomeClaimed(address citizen, uint256 amount);
     event AmountPerEnrollmentUpdated(uint256 newAmount);
 
-    IERC20 public token;
-
     error NotEligibleError(address citizen);
     error CurrentlyEnrolledError(address citizen, uint256 enrollmentTimestamp);
     error NotEnoughFunding(uint256 amountAvailable, uint256 amountRequested);
@@ -59,7 +56,6 @@ contract BasicIncomeDistributor {
     constructor(
         address passportUtilsAddress,
         address nationCredAddress,
-        address rewardToken,
         uint256 amountPerEnrollment_
     ) {
         console.log("Deploying BasicIncomeDistributor");
@@ -69,7 +65,6 @@ contract BasicIncomeDistributor {
         owner = address(msg.sender);
         passportUtils = IPassportUtils(passportUtilsAddress);
         nationCred = INationCred(nationCredAddress);
-        token = IERC20(rewardToken);
         amountPerEnrollment = amountPerEnrollment_;
     }
 
@@ -184,7 +179,7 @@ contract BasicIncomeDistributor {
     }
 
     /// Once enrolled, citizens can claim their earned Basic Income at any time.
-    function claim() public {
+    function claim(address payable beneficial) public {
         console.log("claim");
 
         if (!isEligibleToClaim(msg.sender)) {
@@ -196,13 +191,12 @@ contract BasicIncomeDistributor {
         require(claimableAmount > 0, "There is no reward to claim.");
         console.log("claimableAmount:", claimableAmount);
 
+        // Transfer token to recipient
+        beneficial.transfer(claimableAmount);
+
         //Update latest claim timestamp
         latestClaimTimestamps[msg.sender] = block.timestamp;
         emit IncomeClaimed(msg.sender, claimableAmount);
-
-        // Transfer token to recipient
-        bool success = token.transfer(msg.sender, claimableAmount);
-        require(success, "transfer failed");
     }
 
     function getClaimableAmount(address citizen) public view returns (uint256) {
