@@ -2,14 +2,10 @@
 pragma solidity ^0.8.25;
 
 import "../governance/IVotingEscrow.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "hardhat/console.sol";
 
-contract VotingEscrowMock is ERC20, IVotingEscrow {
+contract VotingEscrowMock is IVotingEscrow {
     mapping(address => LockedBalance) locks;
-
-    constructor() ERC20("Vote-escrowed NATION", "veNATION") {
-        _mint(msg.sender, 100 * 1e18);
-    }
 
     function create_lock(int128 _value, uint256 _unlock_time) public {
         LockedBalance memory lockedBalance = LockedBalance({
@@ -23,5 +19,31 @@ contract VotingEscrowMock is ERC20, IVotingEscrow {
         address account
     ) public view returns (LockedBalance memory lockedBalance) {
         return locks[account];
+    }
+
+    function balanceOf(address account) external view returns (uint256) {
+        LockedBalance memory lockedBalance = locks[account];
+        
+        uint256 lockAmount = uint256(int256(lockedBalance.amount));
+        console.log("lockAmount:", lockAmount);
+        if (lockAmount == 0) {
+            return 0;
+        }
+
+        uint256 lockEnd = lockedBalance.end;
+        console.log("lockEnd:", lockEnd);
+        if (lockEnd < block.timestamp) {
+            return 0;
+        }
+
+        uint256 maxLockPeriod = 4 * 365 days;
+        console.log("maxLockPeriod:", maxLockPeriod);
+        uint256 lockPeriodRemaining = lockEnd - block.timestamp;
+        console.log("lockPeriodRemaining:", lockPeriodRemaining);
+        uint256 percentageRemaining = (100 ether * lockPeriodRemaining) / maxLockPeriod;
+        console.log("percentageRemaining:", percentageRemaining);
+        uint256 amountRemaining = (lockAmount * percentageRemaining) / 100 ether;
+        console.log("amountRemaining:", amountRemaining);
+        return amountRemaining;
     }
 }

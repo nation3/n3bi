@@ -89,23 +89,63 @@ describe("BasicIncomeDistributor", function () {
       );
     });
 
-    // TO DO:  address is passport owner, but passport will expire within the next year
+    it("address is passport owner, but passport will expire within the next year", async function () {
+      const { distributor, passportIssuer, passportUtils, votingEscrow, otherAccount } = await loadFixture(deployFixture);
 
-    it("address is owner of valid passport, but nationcred is not active", async function () {
+      // Claim passport
+      await passportIssuer.connect(otherAccount).claim();
+
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+
+      // Lock 1.60 $NATION for 4 years
+      //  - 1.20 $veNATION after 1 year
+      //  - 0.80 $veNATION after 2 years
+      //  - 0.40 $veNATION after 3 years
+      //  - 0.00 $veNATION after 4 years
+      const lockAmount = ethers.utils.parseUnits("1.60");
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow.connect(otherAccount).create_lock(
+        lockAmount,
+        ethers.BigNumber.from(lockEndInSeconds)
+      );
+      const votingEscrowBalance = await votingEscrow.balanceOf(otherAccount.address);
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      const expirationTimestamp = await passportUtils.getExpirationTimestamp(
+        otherAccount.address
+      );
+      console.log("expirationTimestamp:", expirationTimestamp);
+      console.log(
+        "expirationTimestamp (Date):",
+        new Date(expirationTimestamp * 1_000)
+      );
+
+      expect(await distributor.isEligibleToEnroll(otherAccount.address)).to.equal(
+        false
+      );
+    });
+
+    it("passport will not expire within the next year, but nationcred is not active", async function () {
       const { distributor, passportIssuer, votingEscrow, owner } =
         await loadFixture(deployFixture);
 
       // Claim passport
       await passportIssuer.connect(owner).claim();
 
-      // Lock 6 $NATION for 4 years
-      //  - 4.5 $veNATION after 1 year
-      //  - 3.0 $veNATION after 2 years
-      //  - 1.5 $veNATION after 3 years
-      //  - 0.0 $veNATION after 4 years
-      const lockAmount = ethers.utils.parseUnits("6");
       const initialLockDate = new Date();
       console.log("initialLockDate:", initialLockDate);
+
+      // Lock 3.20 $NATION for 4 years
+      //  - 2.40 $veNATION after 1 year
+      //  - 1.60 $veNATION after 2 years
+      //  - 0.80 $veNATION after 3 years
+      //  - 0.00 $veNATION after 4 years
+      const lockAmount = ethers.utils.parseUnits("3.20");
       const lockEnd = new Date(
         initialLockDate.getTime() + 4 * oneYearInMilliseconds
       );
@@ -115,13 +155,15 @@ describe("BasicIncomeDistributor", function () {
         lockAmount,
         ethers.BigNumber.from(lockEndInSeconds)
       );
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
+      console.log("votingEscrowBalance:", votingEscrowBalance);
 
       expect(await distributor.isEligibleToEnroll(owner.address)).to.equal(
         false
       );
     });
 
-    // TO DO:  address is owner of valid passport, and nationcred is active
+    // TO DO:  passport will not expire within the next year, and nationcred is active
   });
 
   describe("enroll", function () {
@@ -165,6 +207,10 @@ describe("BasicIncomeDistributor", function () {
         false
       );
     });
+  });
+
+  describe("getClaimableAmount", function () {
+    // TO DO
   });
 
   describe("claim", function () {
