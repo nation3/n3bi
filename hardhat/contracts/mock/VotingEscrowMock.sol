@@ -2,7 +2,6 @@
 pragma solidity ^0.8.25;
 
 import "../governance/IVotingEscrow.sol";
-import "hardhat/console.sol";
 
 contract VotingEscrowMock is IVotingEscrow {
     mapping(address => LockedBalance) locks;
@@ -25,25 +24,19 @@ contract VotingEscrowMock is IVotingEscrow {
         LockedBalance memory lockedBalance = locks[account];
         
         uint256 lockAmount = uint256(int256(lockedBalance.amount));
-        console.log("lockAmount:", lockAmount);
         if (lockAmount == 0) {
             return 0;
         }
 
         uint256 lockEnd = lockedBalance.end;
-        console.log("lockEnd:", lockEnd);
         if (lockEnd < block.timestamp) {
             return 0;
         }
 
         uint256 maxLockPeriod = 4 * 365 days;
-        console.log("maxLockPeriod:", maxLockPeriod);
         uint256 lockPeriodRemaining = lockEnd - block.timestamp;
-        console.log("lockPeriodRemaining:", lockPeriodRemaining);
         uint256 percentageRemaining = (100 ether * lockPeriodRemaining) / maxLockPeriod;
-        console.log("percentageRemaining:", percentageRemaining);
         uint256 amountRemaining = (lockAmount * percentageRemaining) / 100 ether;
-        console.log("amountRemaining:", amountRemaining);
         return amountRemaining;
     }
 }

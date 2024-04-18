@@ -3,7 +3,6 @@ pragma solidity ^0.8.25;
 
 import "@nation3/nationcred-contracts/INationCred.sol";
 import "@nation3/nationcred-contracts/utils/IPassportUtils.sol";
-import "hardhat/console.sol";
 
 /**
  *        ---------::::
@@ -103,7 +102,6 @@ contract BasicIncomeDistributor {
         uint256 expirationTimestamp = passportUtils.getExpirationTimestamp(
             citizen
         );
-        console.log("expirationTimestamp:", expirationTimestamp);
         uint256 oneYearFromNow = block.timestamp + 365 days;
         if (expirationTimestamp < oneYearFromNow) {
             return false;
