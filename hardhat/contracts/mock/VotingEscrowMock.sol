@@ -22,7 +22,7 @@ contract VotingEscrowMock is IVotingEscrow {
 
     function balanceOf(address account) external view returns (uint256) {
         LockedBalance memory lockedBalance = locks[account];
-        
+
         uint256 lockAmount = uint256(int256(lockedBalance.amount));
         if (lockAmount == 0) {
             return 0;
@@ -35,8 +35,10 @@ contract VotingEscrowMock is IVotingEscrow {
 
         uint256 maxLockPeriod = 4 * 365 days;
         uint256 lockPeriodRemaining = lockEnd - block.timestamp;
-        uint256 percentageRemaining = (100 ether * lockPeriodRemaining) / maxLockPeriod;
-        uint256 amountRemaining = (lockAmount * percentageRemaining) / 100 ether;
+        uint256 percentageRemaining = (100 ether * lockPeriodRemaining) /
+            maxLockPeriod;
+        uint256 amountRemaining = (lockAmount * percentageRemaining) /
+            100 ether;
         return amountRemaining;
     }
 }
