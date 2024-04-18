@@ -79,18 +79,26 @@ describe("BasicIncomeDistributor", function () {
     });
 
     it("address is passport owner, but passport has expired", async function () {
-      const { distributor, passportIssuer, otherAccount } = await loadFixture(deployFixture);
+      const { distributor, passportIssuer, otherAccount } = await loadFixture(
+        deployFixture
+      );
 
       // Claim passport
       await passportIssuer.connect(otherAccount).claim();
 
-      expect(await distributor.isEligibleToEnroll(otherAccount.address)).to.equal(
-        false
-      );
+      expect(
+        await distributor.isEligibleToEnroll(otherAccount.address)
+      ).to.equal(false);
     });
 
     it("address is passport owner, but passport will expire within the next year", async function () {
-      const { distributor, passportIssuer, passportUtils, votingEscrow, otherAccount } = await loadFixture(deployFixture);
+      const {
+        distributor,
+        passportIssuer,
+        passportUtils,
+        votingEscrow,
+        otherAccount,
+      } = await loadFixture(deployFixture);
 
       // Claim passport
       await passportIssuer.connect(otherAccount).claim();
@@ -109,11 +117,12 @@ describe("BasicIncomeDistributor", function () {
       );
       console.log("lockEnd:", lockEnd);
       const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
-      await votingEscrow.connect(otherAccount).create_lock(
-        lockAmount,
-        ethers.BigNumber.from(lockEndInSeconds)
+      await votingEscrow
+        .connect(otherAccount)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(
+        otherAccount.address
       );
-      const votingEscrowBalance = await votingEscrow.balanceOf(otherAccount.address);
       console.log("votingEscrowBalance:", votingEscrowBalance);
 
       const expirationTimestamp = await passportUtils.getExpirationTimestamp(
@@ -125,9 +134,9 @@ describe("BasicIncomeDistributor", function () {
         new Date(expirationTimestamp * 1_000)
       );
 
-      expect(await distributor.isEligibleToEnroll(otherAccount.address)).to.equal(
-        false
-      );
+      expect(
+        await distributor.isEligibleToEnroll(otherAccount.address)
+      ).to.equal(false);
     });
 
     it("passport will not expire within the next year, but nationcred is not active", async function () {
