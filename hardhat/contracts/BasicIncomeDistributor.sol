@@ -24,6 +24,10 @@ import "@nation3/nationcred-contracts/utils/IPassportUtils.sol";
  *     https://nation3.org
  */
 contract BasicIncomeDistributor {
+  struct Enrollment {
+    uint256 timestamp;
+    uint256 amount;
+  }
     string public constant VERSION = "0.4.0";
 
     address public owner;
@@ -41,7 +45,7 @@ contract BasicIncomeDistributor {
     uint256 public amountEnrolled;
 
     /// The timestamp of each citizen's most recent enrollment.
-    mapping(address => uint256) public enrollmentTimestamps;
+    mapping(address => Enrollment) public enrollments;
     mapping(address => uint256) public latestClaimTimestamps;
 
     event Enrolled(address citizen);
@@ -122,10 +126,10 @@ contract BasicIncomeDistributor {
         }
 
         uint256 oneYearAgo = block.timestamp - 365 days;
-        if (enrollmentTimestamps[msg.sender] > oneYearAgo) {
+        if (enrollments[msg.sender].timestamp > oneYearAgo) {
             revert CurrentlyEnrolledError(
                 msg.sender,
-                enrollmentTimestamps[msg.sender]
+                enrollments[msg.sender].timestamp
             );
         }
 
@@ -135,7 +139,8 @@ contract BasicIncomeDistributor {
         }
 
         amountEnrolled += amountPerEnrollment;
-        enrollmentTimestamps[msg.sender] = block.timestamp;
+        enrollments[msg.sender].timestamp = block.timestamp;
+        enrollments[msg.sender].amount = amountPerEnrollment;
         emit Enrolled(msg.sender);
     }
 
@@ -158,11 +163,11 @@ contract BasicIncomeDistributor {
     function getClaimableAmount(address citizen) public view returns (uint256) {
         uint256 latestClaimTimestamp = latestClaimTimestamps[citizen];
         uint256 enrollmentDuration = latestClaimTimestamp == 0
-            ? block.timestamp - enrollmentTimestamps[citizen]
+            ? block.timestamp - enrollments[citizen].amount
             : block.timestamp - latestClaimTimestamp;
 
         uint256 daysSinceLastClaim = enrollmentDuration / 365 days;
-        return daysSinceLastClaim * amountPerEnrollment;
+        return daysSinceLastClaim * enrollments[citizen].amount;
     }
 
     /// Once enrolled, citizens can claim their earned Basic Income at any time.
