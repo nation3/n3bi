@@ -24,11 +24,12 @@ import "@nation3/nationcred-contracts/utils/IPassportUtils.sol";
  *     https://nation3.org
  */
 contract BasicIncomeDistributor {
-  struct Enrollment {
-    uint256 timestamp;
-    uint256 amount;
-  }
-    string public constant VERSION = "0.4.0";
+    struct Enrollment {
+        uint256 timestamp;
+        uint256 amount;
+    }
+
+    string public constant VERSION = "0.5.0";
 
     address public owner;
 
