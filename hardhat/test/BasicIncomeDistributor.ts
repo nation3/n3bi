@@ -183,7 +183,8 @@ describe("BasicIncomeDistributor", function () {
         distributor,
         "NotEligibleError"
       );
-      expect(await distributor.enrollmentTimestamps(owner.address)).to.equal(0);
+      expect(await distributor.enrollments(owner.address).timestamp).to.equal(undefined);
+      expect(await distributor.enrollments(owner.address).amount).to.equal(undefined);
     });
 
     // TO DO:  citizen is eligible
