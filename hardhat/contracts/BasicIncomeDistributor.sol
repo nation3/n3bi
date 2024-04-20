@@ -33,20 +33,22 @@ contract BasicIncomeDistributor {
 
     address public owner;
 
-    /// The smart contract used for checking if a citizen holds a valid passport.
+    /// @notice The smart contract used for checking if a citizen holds a valid passport.
     IPassportUtils public passportUtils;
 
-    /// The smart contract used for checking if a Nation3 citizen is active.
+    /// @notice The smart contract used for checking if a Nation3 citizen is active.
     INationCred public nationCred;
 
-    /// The Basic Income amount a citizen can claim per yearly enrollment.
+    /// @notice The Basic Income amount a citizen can claim per yearly enrollment.
     uint256 public amountPerEnrollment;
 
-    /// The total amount enrolled, accumulated over time.
+    /// @notice The total amount enrolled, accumulated over time.
     uint256 public amountEnrolled;
 
-    /// The timestamp of each citizen's most recent enrollment.
+    /// @notice Each citizen's most recent enrollment.
     mapping(address => Enrollment) public enrollments;
+
+    /// @notice The timestamp of each citizen's most recent claim.
     mapping(address => uint256) public latestClaimTimestamps;
 
     event Enrolled(address citizen);
@@ -91,7 +93,7 @@ contract BasicIncomeDistributor {
         emit AmountPerEnrollmentUpdated(amountPerEnrollment);
     }
 
-    /// Checks if a Nation3 citizen is eligible to enroll for Basic Income.
+    /// @notice Checks if a citizen is eligible to enroll for Basic Income.
     function isEligibleToEnroll(address citizen) public view returns (bool) {
         // The account owns the passport NFT
         if (!passportUtils.isOwner(citizen)) {
@@ -120,7 +122,7 @@ contract BasicIncomeDistributor {
         return true;
     }
 
-    /// Once eligible, the citizen can enroll for Basic Income, as long as the smart contract contains enough funding for covering one additional citizen's Basic Income for the duration of 1 year.
+    /// @notice Once eligible, the citizen can enroll for Basic Income, as long as the smart contract contains enough funding for covering one additional citizen's Basic Income for the duration of 1 year.
     function enroll() public {
         if (!isEligibleToEnroll(msg.sender)) {
             revert NotEligibleError(msg.sender);
@@ -145,7 +147,7 @@ contract BasicIncomeDistributor {
         emit Enrolled(msg.sender);
     }
 
-    /// Checks if a Nation3 citizen is eligible to claim Basic Income.
+    /// @notice Checks if a citizen is eligible to claim Basic Income.
     function isEligibleToClaim(address citizen) public view returns (bool) {
         // The account owns the passport NFT
         if (!passportUtils.isOwner(citizen)) {
@@ -160,7 +162,7 @@ contract BasicIncomeDistributor {
         return true;
     }
 
-    /// Calculate the amount that an enrolled citizen can claim
+    /// @notice Calculate the amount that an enrolled citizen can claim.
     function getClaimableAmount(address citizen) public view returns (uint256) {
         uint256 latestClaimTimestamp = latestClaimTimestamps[citizen];
         uint256 enrollmentDuration = latestClaimTimestamp == 0
@@ -171,7 +173,7 @@ contract BasicIncomeDistributor {
         return daysSinceLastClaim * enrollments[citizen].amount;
     }
 
-    /// Once enrolled, citizens can claim their earned Basic Income at any time.
+    /// @notice Once enrolled, citizens can claim their earned Basic Income at any time.
     function claim() public {
         if (!isEligibleToClaim(msg.sender)) {
             revert NotEligibleError(msg.sender);
