@@ -6,7 +6,7 @@ import "../passport/IPassportIssuer.sol";
 import "../governance/IVotingEscrow.sol";
 
 contract PassportUtilsMock is IPassportUtils {
-    string public constant VERSION = "0.6.8";
+    string public constant VERSION = "0.7.0";
     IPassportIssuer public passportIssuer;
     IVotingEscrow public votingEscrow;
 
