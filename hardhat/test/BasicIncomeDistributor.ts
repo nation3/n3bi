@@ -605,6 +605,16 @@ describe("BasicIncomeDistributor", function () {
   });
 
   describe("getClaimableAmount", function () {
+    it("not enrolled", async function () {
+      const { distributor, owner } = await loadFixture(deployFixture);
+
+      const claimableAmount = await distributor.getClaimableAmount(
+        owner.address
+      );
+      console.log("claimableAmount:", claimableAmount);
+      expect(claimableAmount).to.equal(0);
+    });
+
     it("claimable - immediately after enrolling", async function () {
       const { distributor, owner, passportIssuer, votingEscrow, nationCred } =
         await loadFixture(deployFixture);
