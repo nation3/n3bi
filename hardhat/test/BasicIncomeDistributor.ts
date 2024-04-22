@@ -69,6 +69,34 @@ describe("BasicIncomeDistributor", function () {
     expect(passportUtils.address.length).to.equal(42);
   });
 
+  it("setOwner", async function () {
+    const { owner, otherAccount, distributor } = await loadFixture(deployFixture);
+
+    await distributor.setOwner(otherAccount.address);
+    expect(await distributor.owner()).to.equal(otherAccount.address);
+  });
+
+  it("setPassportUtils", async function () {
+    const { owner, otherAccount, distributor } = await loadFixture(deployFixture);
+
+    await distributor.setPassportUtils(ethers.constants.AddressZero);
+    expect(await distributor.passportUtils()).to.equal(ethers.constants.AddressZero);
+  });
+
+  it("setNationCred", async function () {
+    const { owner, otherAccount, distributor } = await loadFixture(deployFixture);
+
+    await distributor.setNationCred(ethers.constants.AddressZero);
+    expect(await distributor.nationCred()).to.equal(ethers.constants.AddressZero);
+  });
+
+  it("setAmountPerEnrollment", async function () {
+    const { owner, otherAccount, distributor } = await loadFixture(deployFixture);
+
+    await distributor.setAmountPerEnrollment(0);
+    expect(await distributor.amountPerEnrollment()).to.equal(0);
+  });
+
   describe("isEligibleToEnroll", function () {
     it("address is not passport owner", async function () {
       const { distributor, owner } = await loadFixture(deployFixture);
