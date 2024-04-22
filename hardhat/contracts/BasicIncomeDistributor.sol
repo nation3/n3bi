@@ -164,6 +164,9 @@ contract BasicIncomeDistributor {
 
     /// @notice Calculate the amount that an enrolled citizen can claim.
     function getClaimableAmount(address citizen) public view returns (uint256) {
+        if (enrollments[citizen].timestamp > 0) {
+            return 0;
+        }
         uint256 latestClaimTimestamp = latestClaimTimestamps[citizen];
         uint256 enrollmentDuration = latestClaimTimestamp == 0
             ? block.timestamp - enrollments[citizen].amount

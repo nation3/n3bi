@@ -573,7 +573,53 @@ describe("BasicIncomeDistributor", function () {
   });
 
   describe("getClaimableAmount", function () {
-    // TO DO
+    it("claimable immediately after enrolling", async function () {
+      const { distributor, owner, passportIssuer, votingEscrow, nationCred } =
+        await loadFixture(deployFixture);
+
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      // Lock 3.20 $NATION for 4 years
+      //  - 2.40 $veNATION after 1 year
+      //  - 1.60 $veNATION after 2 years
+      //  - 0.80 $veNATION after 3 years
+      //  - 0.00 $veNATION after 4 years
+      const lockAmount = ethers.utils.parseUnits("3.20");
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow
+        .connect(owner)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await nationCred.setActiveCitizens([passportId]);
+
+      // Fund contract for covering one additional citizen's Basic Income
+      await owner.sendTransaction({
+        to: distributor.address,
+        value: amountPerEnrollment,
+      });
+
+      await distributor.connect(owner).enroll();
+
+      const enrollment = await distributor.enrollments(owner.address);
+      console.log("enrollment:", enrollment);
+      expect(enrollment.timestamp).to.not.equal(0);
+      expect(enrollment.amount).to.equal(amountPerEnrollment);
+
+      const claimableAmount = await distributor.getClaimableAmount(owner.address);
+      console.log("claimableAmount:", claimableAmount);
+      expect(claimableAmount).to.equal(0);
+    });
   });
 
   describe("claim", function () {
