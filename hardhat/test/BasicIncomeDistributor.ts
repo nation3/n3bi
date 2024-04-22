@@ -258,6 +258,38 @@ describe("BasicIncomeDistributor", function () {
         false
       );
     });
+
+    it("address is passport owner, and passport has not expired", async function () {
+      const { distributor, user2, passportIssuer, votingEscrow } = await loadFixture(
+        deployFixture
+      );
+
+      // Claim passport
+      await passportIssuer.connect(user2).claim();
+      const passportId = await passportIssuer.passportId(user2.address);
+      console.log("passportId:", passportId);
+
+      // Lock 1.60 $NATION for 4 years
+      const lockAmount = ethers.utils.parseUnits("1.60");
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow
+        .connect(user2)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(
+        user2.address
+      );
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      expect(await distributor.isEligibleToClaim(user2.address)).to.equal(
+        true
+      );
+    });
   });
 
   describe("getClaimableAmount", function () {
