@@ -95,9 +95,7 @@ describe("BasicIncomeDistributor", function () {
   });
 
   it("setAmountPerEnrollment", async function () {
-    const { owner, otherAccount, distributor } = await loadFixture(
-      deployFixture
-    );
+    const { distributor } = await loadFixture(deployFixture);
 
     await distributor.setAmountPerEnrollment(0);
     expect(await distributor.amountPerEnrollment()).to.equal(0);
