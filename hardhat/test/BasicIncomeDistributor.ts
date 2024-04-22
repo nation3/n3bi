@@ -17,7 +17,9 @@ describe("BasicIncomeDistributor", function () {
     const PassportIssuer = await ethers.getContractFactory(
       "PassportIssuerMock"
     );
-    const passportIssuer = await PassportIssuer.deploy();
+    const passportIssuer = await PassportIssuer.deploy(
+      pass3.address
+    );
 
     const VotingEscrow = await ethers.getContractFactory("VotingEscrowMock");
     const votingEscrow = await VotingEscrow.deploy();
@@ -172,7 +174,42 @@ describe("BasicIncomeDistributor", function () {
       );
     });
 
-    // TO DO:  passport will not expire within the next year, and nationcred is active
+    it("passport will not expire within the next year, and nationcred is active", async function () {
+      const { distributor, passportIssuer, votingEscrow, nationCred, owner } =
+        await loadFixture(deployFixture);
+
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+
+      // Lock 3.20 $NATION for 4 years
+      //  - 2.40 $veNATION after 1 year
+      //  - 1.60 $veNATION after 2 years
+      //  - 0.80 $veNATION after 3 years
+      //  - 0.00 $veNATION after 4 years
+      const lockAmount = ethers.utils.parseUnits("3.20");
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow.create_lock(
+        lockAmount,
+        ethers.BigNumber.from(lockEndInSeconds)
+      );
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await nationCred.setActiveCitizens([passportId]);
+
+      expect(await distributor.isEligibleToEnroll(owner.address)).to.equal(
+        true
+      );
+    });
   });
 
   describe("enroll", function () {
