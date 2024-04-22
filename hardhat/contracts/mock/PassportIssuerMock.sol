@@ -6,7 +6,7 @@ import "./PassportMock.sol";
 
 contract PassportIssuerMock is IPassportIssuer {
     error PassportNotIssued();
-    
+
     /// @notice The token that issues.
     PassportMock public passToken;
 
