@@ -70,28 +70,40 @@ describe("BasicIncomeDistributor", function () {
   });
 
   it("setOwner", async function () {
-    const { owner, otherAccount, distributor } = await loadFixture(deployFixture);
+    const { owner, otherAccount, distributor } = await loadFixture(
+      deployFixture
+    );
 
     await distributor.setOwner(otherAccount.address);
     expect(await distributor.owner()).to.equal(otherAccount.address);
   });
 
   it("setPassportUtils", async function () {
-    const { owner, otherAccount, distributor } = await loadFixture(deployFixture);
+    const { owner, otherAccount, distributor } = await loadFixture(
+      deployFixture
+    );
 
     await distributor.setPassportUtils(ethers.constants.AddressZero);
-    expect(await distributor.passportUtils()).to.equal(ethers.constants.AddressZero);
+    expect(await distributor.passportUtils()).to.equal(
+      ethers.constants.AddressZero
+    );
   });
 
   it("setNationCred", async function () {
-    const { owner, otherAccount, distributor } = await loadFixture(deployFixture);
+    const { owner, otherAccount, distributor } = await loadFixture(
+      deployFixture
+    );
 
     await distributor.setNationCred(ethers.constants.AddressZero);
-    expect(await distributor.nationCred()).to.equal(ethers.constants.AddressZero);
+    expect(await distributor.nationCred()).to.equal(
+      ethers.constants.AddressZero
+    );
   });
 
   it("setAmountPerEnrollment", async function () {
-    const { owner, otherAccount, distributor } = await loadFixture(deployFixture);
+    const { owner, otherAccount, distributor } = await loadFixture(
+      deployFixture
+    );
 
     await distributor.setAmountPerEnrollment(0);
     expect(await distributor.amountPerEnrollment()).to.equal(0);
@@ -644,7 +656,9 @@ describe("BasicIncomeDistributor", function () {
       expect(enrollment.timestamp).to.not.equal(0);
       expect(enrollment.amount).to.equal(amountPerEnrollment);
 
-      const claimableAmount = await distributor.getClaimableAmount(owner.address);
+      const claimableAmount = await distributor.getClaimableAmount(
+        owner.address
+      );
       console.log("claimableAmount:", claimableAmount);
       expect(claimableAmount).to.equal(0);
     });
