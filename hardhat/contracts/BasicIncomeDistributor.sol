@@ -180,7 +180,7 @@ contract BasicIncomeDistributor {
         }
 
         // Calculate the amount based on the enrollment duration relative to 1 year
-        return amountPerEnrollment * enrollmentDuration / 365 days;
+        return (amountPerEnrollment * enrollmentDuration) / 365 days;
     }
 
     /// @notice Once enrolled, citizens can claim their earned Basic Income at any time.
