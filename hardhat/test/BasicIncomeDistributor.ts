@@ -697,7 +697,9 @@ describe("BasicIncomeDistributor", function () {
       await time.increase(ONE_DAY_IN_SECONDS * 182.5);
       console.log("182.5 days later:", new Date((await time.latest()) * 1_000));
 
-      const claimableAmount = await distributor.getClaimableAmount(owner.address);
+      const claimableAmount = await distributor.getClaimableAmount(
+        owner.address
+      );
       console.log("claimableAmount:", claimableAmount);
       expect(claimableAmount).to.equal(ethers.utils.parseEther("0.06")); // 0.12 / 2
     });
@@ -744,7 +746,9 @@ describe("BasicIncomeDistributor", function () {
       await time.increase(ONE_DAY_IN_SECONDS * 365);
       console.log("365 days later:", new Date((await time.latest()) * 1_000));
 
-      const claimableAmount = await distributor.getClaimableAmount(owner.address);
+      const claimableAmount = await distributor.getClaimableAmount(
+        owner.address
+      );
       console.log("claimableAmount:", claimableAmount);
       expect(claimableAmount).to.equal(amountPerEnrollment);
     });
