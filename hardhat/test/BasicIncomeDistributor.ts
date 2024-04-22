@@ -18,9 +18,7 @@ describe("BasicIncomeDistributor", function () {
     const PassportIssuer = await ethers.getContractFactory(
       "PassportIssuerMock"
     );
-    const passportIssuer = await PassportIssuer.deploy(
-      pass3.address
-    );
+    const passportIssuer = await PassportIssuer.deploy(pass3.address);
 
     const VotingEscrow = await ethers.getContractFactory("VotingEscrowMock");
     const votingEscrow = await VotingEscrow.deploy();
@@ -228,7 +226,9 @@ describe("BasicIncomeDistributor", function () {
     });
 
     it("address is passport owner, but passport has expired", async function () {
-      const { distributor, owner, passportIssuer } = await loadFixture(deployFixture);
+      const { distributor, owner, passportIssuer } = await loadFixture(
+        deployFixture
+      );
 
       // Claim passport
       await passportIssuer.connect(owner).claim();
@@ -239,7 +239,7 @@ describe("BasicIncomeDistributor", function () {
         distributor,
         "NotEligibleError"
       );
-      
+
       const enrollment = await distributor.enrollments(owner.address);
       console.log("enrollment:", enrollment);
       expect(enrollment.timestamp).to.equal(0);
@@ -247,7 +247,8 @@ describe("BasicIncomeDistributor", function () {
     });
 
     it("passport will not expire within the next year, but nationcred is not active", async function () {
-      const { distributor, owner, passportIssuer, votingEscrow } = await loadFixture(deployFixture);
+      const { distributor, owner, passportIssuer, votingEscrow } =
+        await loadFixture(deployFixture);
 
       // Claim passport
       await passportIssuer.connect(owner).claim();
@@ -270,15 +271,12 @@ describe("BasicIncomeDistributor", function () {
       await votingEscrow
         .connect(owner)
         .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
-      const votingEscrowBalance = await votingEscrow.balanceOf(
-        owner.address
-      );
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
       console.log("votingEscrowBalance:", votingEscrowBalance);
 
-      await expect(distributor.connect(owner).enroll()).to.be.revertedWithCustomError(
-        distributor,
-        "NotEligibleError"
-      );
+      await expect(
+        distributor.connect(owner).enroll()
+      ).to.be.revertedWithCustomError(distributor, "NotEligibleError");
 
       const enrollment = await distributor.enrollments(owner.address);
       console.log("enrollment:", enrollment);
@@ -287,7 +285,8 @@ describe("BasicIncomeDistributor", function () {
     });
 
     it("is eligible to enroll, but distributor contract has insufficient funding", async function () {
-      const { distributor, owner, passportIssuer, votingEscrow, nationCred } = await loadFixture(deployFixture);
+      const { distributor, owner, passportIssuer, votingEscrow, nationCred } =
+        await loadFixture(deployFixture);
 
       // Claim passport
       await passportIssuer.connect(owner).claim();
@@ -310,17 +309,14 @@ describe("BasicIncomeDistributor", function () {
       await votingEscrow
         .connect(owner)
         .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
-      const votingEscrowBalance = await votingEscrow.balanceOf(
-        owner.address
-      );
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
       console.log("votingEscrowBalance:", votingEscrowBalance);
 
       await nationCred.setActiveCitizens([passportId]);
 
-      await expect(distributor.connect(owner).enroll()).to.be.revertedWithCustomError(
-        distributor,
-        "NotEnoughFunding"
-      );
+      await expect(
+        distributor.connect(owner).enroll()
+      ).to.be.revertedWithCustomError(distributor, "NotEnoughFunding");
 
       const enrollment = await distributor.enrollments(owner.address);
       console.log("enrollment:", enrollment);
@@ -329,7 +325,8 @@ describe("BasicIncomeDistributor", function () {
     });
 
     it("is eligible to enroll, and distributor contract has enough funding", async function () {
-      const { distributor, owner, passportIssuer, votingEscrow, nationCred } = await loadFixture(deployFixture);
+      const { distributor, owner, passportIssuer, votingEscrow, nationCred } =
+        await loadFixture(deployFixture);
 
       // Claim passport
       await passportIssuer.connect(owner).claim();
@@ -352,9 +349,7 @@ describe("BasicIncomeDistributor", function () {
       await votingEscrow
         .connect(owner)
         .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
-      const votingEscrowBalance = await votingEscrow.balanceOf(
-        owner.address
-      );
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
       console.log("votingEscrowBalance:", votingEscrowBalance);
 
       await nationCred.setActiveCitizens([passportId]);
@@ -362,7 +357,7 @@ describe("BasicIncomeDistributor", function () {
       // Fund contract for covering one additional citizen's Basic Income
       await owner.sendTransaction({
         to: distributor.address,
-        value: amountPerEnrollment
+        value: amountPerEnrollment,
       });
 
       await distributor.connect(owner).enroll();
@@ -374,7 +369,8 @@ describe("BasicIncomeDistributor", function () {
     });
 
     it("two enrollments - 2nd enrollment same day", async function () {
-      const { distributor, owner, passportIssuer, votingEscrow, nationCred } = await loadFixture(deployFixture);
+      const { distributor, owner, passportIssuer, votingEscrow, nationCred } =
+        await loadFixture(deployFixture);
 
       // Claim passport
       await passportIssuer.connect(owner).claim();
@@ -397,9 +393,7 @@ describe("BasicIncomeDistributor", function () {
       await votingEscrow
         .connect(owner)
         .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
-      const votingEscrowBalance = await votingEscrow.balanceOf(
-        owner.address
-      );
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
       console.log("votingEscrowBalance:", votingEscrowBalance);
 
       await nationCred.setActiveCitizens([passportId]);
@@ -407,17 +401,16 @@ describe("BasicIncomeDistributor", function () {
       // Fund contract for covering one additional citizen's Basic Income
       await owner.sendTransaction({
         to: distributor.address,
-        value: amountPerEnrollment
+        value: amountPerEnrollment,
       });
 
       // 1st enrollment
       await distributor.connect(owner).enroll();
 
       // 2nd enrollment
-      await expect(distributor.connect(owner).enroll()).to.be.revertedWithCustomError(
-        distributor,
-        "CurrentlyEnrolledError"
-      );
+      await expect(
+        distributor.connect(owner).enroll()
+      ).to.be.revertedWithCustomError(distributor, "CurrentlyEnrolledError");
     });
 
     // TO DO:  two enrollments - 2nd enrollment 364 days later
@@ -448,9 +441,8 @@ describe("BasicIncomeDistributor", function () {
     });
 
     it("address is passport owner, and passport has not expired", async function () {
-      const { distributor, user2, passportIssuer, votingEscrow } = await loadFixture(
-        deployFixture
-      );
+      const { distributor, user2, passportIssuer, votingEscrow } =
+        await loadFixture(deployFixture);
 
       // Claim passport
       await passportIssuer.connect(user2).claim();
@@ -469,14 +461,10 @@ describe("BasicIncomeDistributor", function () {
       await votingEscrow
         .connect(user2)
         .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
-      const votingEscrowBalance = await votingEscrow.balanceOf(
-        user2.address
-      );
+      const votingEscrowBalance = await votingEscrow.balanceOf(user2.address);
       console.log("votingEscrowBalance:", votingEscrowBalance);
 
-      expect(await distributor.isEligibleToClaim(user2.address)).to.equal(
-        true
-      );
+      expect(await distributor.isEligibleToClaim(user2.address)).to.equal(true);
     });
   });
 
