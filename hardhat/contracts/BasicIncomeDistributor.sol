@@ -29,7 +29,7 @@ contract BasicIncomeDistributor {
         uint256 amount;
     }
 
-    string public constant VERSION = "0.5.0";
+    string public constant VERSION = "0.7.0";
 
     address public owner;
 
