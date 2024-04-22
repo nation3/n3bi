@@ -655,6 +655,53 @@ describe("BasicIncomeDistributor", function () {
       expect(claimableAmount).to.equal(0);
     });
 
+    it("claimable - 182.5 days after enrolling", async function () {
+      const { distributor, owner, passportIssuer, votingEscrow, nationCred } =
+        await loadFixture(deployFixture);
+
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      // Lock 3.20 $NATION for 4 years
+      //  - 2.40 $veNATION after 1 year
+      //  - 1.60 $veNATION after 2 years
+      //  - 0.80 $veNATION after 3 years
+      //  - 0.00 $veNATION after 4 years
+      const lockAmount = ethers.utils.parseUnits("3.20");
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow
+        .connect(owner)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await nationCred.setActiveCitizens([passportId]);
+
+      // Fund contract for covering one additional citizen's Basic Income
+      await owner.sendTransaction({
+        to: distributor.address,
+        value: amountPerEnrollment,
+      });
+
+      await distributor.connect(owner).enroll();
+
+      // Simulate the passage of time, to 182.5 days later
+      await time.increase(ONE_DAY_IN_SECONDS * 182.5);
+      console.log("182.5 days later:", new Date((await time.latest()) * 1_000));
+
+      const claimableAmount = await distributor.getClaimableAmount(owner.address);
+      console.log("claimableAmount:", claimableAmount);
+      expect(claimableAmount).to.equal(ethers.utils.parseEther("0.06")); // 0.12 / 2
+    });
+
     it("claimable - 365 days after enrolling", async function () {
       const { distributor, owner, passportIssuer, votingEscrow, nationCred } =
         await loadFixture(deployFixture);
@@ -693,15 +740,11 @@ describe("BasicIncomeDistributor", function () {
 
       await distributor.connect(owner).enroll();
 
-      let claimableAmount = await distributor.getClaimableAmount(owner.address);
-      console.log("claimableAmount:", claimableAmount);
-      expect(claimableAmount).to.equal(0);
-
       // Simulate the passage of time, to 365 days later
       await time.increase(ONE_DAY_IN_SECONDS * 365);
       console.log("365 days later:", new Date((await time.latest()) * 1_000));
 
-      claimableAmount = await distributor.getClaimableAmount(owner.address);
+      const claimableAmount = await distributor.getClaimableAmount(owner.address);
       console.log("claimableAmount:", claimableAmount);
       expect(claimableAmount).to.equal(amountPerEnrollment);
     });

@@ -164,16 +164,23 @@ contract BasicIncomeDistributor {
 
     /// @notice Calculate the amount that an enrolled citizen can claim.
     function getClaimableAmount(address citizen) public view returns (uint256) {
-        if (enrollments[citizen].timestamp == 0) {
+        Enrollment memory enrollment = enrollments[citizen];
+
+        // If the citizen has not enrolled, return zero
+        if (enrollment.timestamp == 0) {
             return 0;
         }
-        uint256 latestClaimTimestamp = latestClaimTimestamps[citizen];
-        uint256 enrollmentDuration = latestClaimTimestamp == 0
-            ? block.timestamp - enrollments[citizen].amount
-            : block.timestamp - latestClaimTimestamp;
 
-        uint256 daysSinceLastClaim = enrollmentDuration / 365 days;
-        return daysSinceLastClaim * enrollments[citizen].amount;
+        // Calculate the time passed since the enrollment
+        uint256 enrollmentDuration = block.timestamp - enrollment.timestamp;
+
+        // If the enrollment period has ended, return the full amount
+        if (enrollmentDuration >= 365 days) {
+            return amountPerEnrollment;
+        }
+
+        // Calculate the amount based on the enrollment duration relative to 1 year
+        return amountPerEnrollment * enrollmentDuration / 365 days;
     }
 
     /// @notice Once enrolled, citizens can claim their earned Basic Income at any time.
