@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { ethers } from "hardhat";
 
+const amountPerEnrollment = ethers.utils.parseEther("0.12");
 const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1_000;
 
 describe("BasicIncomeDistributor", function () {
@@ -32,8 +33,6 @@ describe("BasicIncomeDistributor", function () {
 
     const NationCred = await ethers.getContractFactory("NationCredMock");
     const nationCred = await NationCred.deploy(pass3.address);
-
-    const amountPerEnrollment = ethers.utils.parseEther("0.12");
 
     const BasicIncomeDistributor = await ethers.getContractFactory(
       "BasicIncomeDistributor"
@@ -228,9 +227,198 @@ describe("BasicIncomeDistributor", function () {
       );
     });
 
-    // TO DO:  citizen is eligible
+    it("address is passport owner, but passport has expired", async function () {
+      const { distributor, owner, passportIssuer } = await loadFixture(deployFixture);
 
-    // TO DO:  two enrollments - 2nd enrollment same da
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      await expect(distributor.enroll()).to.be.revertedWithCustomError(
+        distributor,
+        "NotEligibleError"
+      );
+      
+      const enrollment = await distributor.enrollments(owner.address);
+      console.log("enrollment:", enrollment);
+      expect(enrollment.timestamp).to.equal(0);
+      expect(enrollment.amount).to.equal(0);
+    });
+
+    it("passport will not expire within the next year, but nationcred is not active", async function () {
+      const { distributor, owner, passportIssuer, votingEscrow } = await loadFixture(deployFixture);
+
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      // Lock 3.20 $NATION for 4 years
+      //  - 2.40 $veNATION after 1 year
+      //  - 1.60 $veNATION after 2 years
+      //  - 0.80 $veNATION after 3 years
+      //  - 0.00 $veNATION after 4 years
+      const lockAmount = ethers.utils.parseUnits("3.20");
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow
+        .connect(owner)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(
+        owner.address
+      );
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await expect(distributor.connect(owner).enroll()).to.be.revertedWithCustomError(
+        distributor,
+        "NotEligibleError"
+      );
+
+      const enrollment = await distributor.enrollments(owner.address);
+      console.log("enrollment:", enrollment);
+      expect(enrollment.timestamp).to.equal(0);
+      expect(enrollment.amount).to.equal(0);
+    });
+
+    it("is eligible to enroll, but distributor contract has insufficient funding", async function () {
+      const { distributor, owner, passportIssuer, votingEscrow, nationCred } = await loadFixture(deployFixture);
+
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      // Lock 3.20 $NATION for 4 years
+      //  - 2.40 $veNATION after 1 year
+      //  - 1.60 $veNATION after 2 years
+      //  - 0.80 $veNATION after 3 years
+      //  - 0.00 $veNATION after 4 years
+      const lockAmount = ethers.utils.parseUnits("3.20");
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow
+        .connect(owner)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(
+        owner.address
+      );
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await nationCred.setActiveCitizens([passportId]);
+
+      await expect(distributor.connect(owner).enroll()).to.be.revertedWithCustomError(
+        distributor,
+        "NotEnoughFunding"
+      );
+
+      const enrollment = await distributor.enrollments(owner.address);
+      console.log("enrollment:", enrollment);
+      expect(enrollment.timestamp).to.equal(0);
+      expect(enrollment.amount).to.equal(0);
+    });
+
+    it("is eligible to enroll, and distributor contract has enough funding", async function () {
+      const { distributor, owner, passportIssuer, votingEscrow, nationCred } = await loadFixture(deployFixture);
+
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      // Lock 3.20 $NATION for 4 years
+      //  - 2.40 $veNATION after 1 year
+      //  - 1.60 $veNATION after 2 years
+      //  - 0.80 $veNATION after 3 years
+      //  - 0.00 $veNATION after 4 years
+      const lockAmount = ethers.utils.parseUnits("3.20");
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow
+        .connect(owner)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(
+        owner.address
+      );
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await nationCred.setActiveCitizens([passportId]);
+
+      // Fund contract for covering one additional citizen's Basic Income
+      await owner.sendTransaction({
+        to: distributor.address,
+        value: amountPerEnrollment
+      });
+
+      await distributor.connect(owner).enroll();
+
+      const enrollment = await distributor.enrollments(owner.address);
+      console.log("enrollment:", enrollment);
+      expect(enrollment.timestamp).to.not.equal(0);
+      expect(enrollment.amount).to.equal(amountPerEnrollment);
+    });
+
+    it("two enrollments - 2nd enrollment same day", async function () {
+      const { distributor, owner, passportIssuer, votingEscrow, nationCred } = await loadFixture(deployFixture);
+
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      // Lock 3.20 $NATION for 4 years
+      //  - 2.40 $veNATION after 1 year
+      //  - 1.60 $veNATION after 2 years
+      //  - 0.80 $veNATION after 3 years
+      //  - 0.00 $veNATION after 4 years
+      const lockAmount = ethers.utils.parseUnits("3.20");
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow
+        .connect(owner)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(
+        owner.address
+      );
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await nationCred.setActiveCitizens([passportId]);
+
+      // Fund contract for covering one additional citizen's Basic Income
+      await owner.sendTransaction({
+        to: distributor.address,
+        value: amountPerEnrollment
+      });
+
+      // 1st enrollment
+      await distributor.connect(owner).enroll();
+
+      // 2nd enrollment
+      await expect(distributor.connect(owner).enroll()).to.be.revertedWithCustomError(
+        distributor,
+        "CurrentlyEnrolledError"
+      );
+    });
 
     // TO DO:  two enrollments - 2nd enrollment 364 days later
 
