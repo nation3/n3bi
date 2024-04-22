@@ -765,6 +765,12 @@ describe("BasicIncomeDistributor", function () {
   });
 
   describe("claim", function () {
-    // TO DO
+    it("address is not passport owner", async function () {
+      const { distributor, owner } = await loadFixture(deployFixture);
+
+      await expect(
+        distributor.connect(owner).claim()
+      ).to.be.revertedWithCustomError(distributor, "NotEligibleError");
+    });
   });
 });
