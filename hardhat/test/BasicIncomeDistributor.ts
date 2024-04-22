@@ -70,18 +70,14 @@ describe("BasicIncomeDistributor", function () {
   });
 
   it("setOwner", async function () {
-    const { owner, otherAccount, distributor } = await loadFixture(
-      deployFixture
-    );
+    const { otherAccount, distributor } = await loadFixture(deployFixture);
 
     await distributor.setOwner(otherAccount.address);
     expect(await distributor.owner()).to.equal(otherAccount.address);
   });
 
   it("setPassportUtils", async function () {
-    const { owner, otherAccount, distributor } = await loadFixture(
-      deployFixture
-    );
+    const { distributor } = await loadFixture(deployFixture);
 
     await distributor.setPassportUtils(ethers.constants.AddressZero);
     expect(await distributor.passportUtils()).to.equal(
@@ -90,9 +86,7 @@ describe("BasicIncomeDistributor", function () {
   });
 
   it("setNationCred", async function () {
-    const { owner, otherAccount, distributor } = await loadFixture(
-      deployFixture
-    );
+    const { distributor } = await loadFixture(deployFixture);
 
     await distributor.setNationCred(ethers.constants.AddressZero);
     expect(await distributor.nationCred()).to.equal(
