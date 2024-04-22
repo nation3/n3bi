@@ -1,9 +1,10 @@
 import { expect } from "chai";
-import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { ethers } from "hardhat";
 
 const amountPerEnrollment = ethers.utils.parseEther("0.12");
 const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1_000;
+const ONE_DAY_IN_SECONDS = 1 * 24 * 60 * 60;
 
 describe("BasicIncomeDistributor", function () {
   async function deployFixture() {
@@ -413,9 +414,112 @@ describe("BasicIncomeDistributor", function () {
       ).to.be.revertedWithCustomError(distributor, "CurrentlyEnrolledError");
     });
 
-    // TO DO:  two enrollments - 2nd enrollment 364 days later
+    it("two enrollments - 2nd enrollment 364 days later", async function () {
+      const { distributor, owner, passportIssuer, votingEscrow, nationCred } =
+        await loadFixture(deployFixture);
 
-    // TO DO:  two enrollments - 2nd enrollment 366 days later
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      // Lock 3.20 $NATION for 4 years
+      //  - 2.40 $veNATION after 1 year
+      //  - 1.60 $veNATION after 2 years
+      //  - 0.80 $veNATION after 3 years
+      //  - 0.00 $veNATION after 4 years
+      const lockAmount = ethers.utils.parseUnits("3.20");
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow
+        .connect(owner)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await nationCred.setActiveCitizens([passportId]);
+
+      // Fund contract for covering one additional citizen's Basic Income
+      await owner.sendTransaction({
+        to: distributor.address,
+        value: amountPerEnrollment,
+      });
+
+      // 1st enrollment
+      await distributor.connect(owner).enroll();
+
+      // Simulate the passage of time, to 364 days later
+      await time.increase(ONE_DAY_IN_SECONDS * 364);
+      console.log("364 days later:", new Date(await time.latest() * 1_000));
+
+      // 2nd enrollment
+      await expect(
+        distributor.connect(owner).enroll()
+      ).to.be.revertedWithCustomError(distributor, "CurrentlyEnrolledError");
+    });
+
+    it("two enrollments - 2nd enrollment 366 days later", async function () {
+      const { distributor, owner, passportIssuer, votingEscrow, nationCred } =
+        await loadFixture(deployFixture);
+
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      // Lock 3.20 $NATION for 4 years
+      //  - 2.40 $veNATION after 1 year
+      //  - 1.60 $veNATION after 2 years
+      //  - 0.80 $veNATION after 3 years
+      //  - 0.00 $veNATION after 4 years
+      const lockAmount = ethers.utils.parseUnits("3.20");
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow
+        .connect(owner)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await nationCred.setActiveCitizens([passportId]);
+
+      // Fund contract for covering one additional citizen's Basic Income
+      await owner.sendTransaction({
+        to: distributor.address,
+        value: amountPerEnrollment,
+      });
+
+      // 1st enrollment
+      await distributor.connect(owner).enroll();
+
+      // Simulate the passage of time, to 366 days later
+      await time.increase(ONE_DAY_IN_SECONDS * 366);
+      console.log("364 days later:", new Date(await time.latest() * 1_000));
+
+      // Fund contract for covering one additional citizen's Basic Income
+      await owner.sendTransaction({
+        to: distributor.address,
+        value: amountPerEnrollment,
+      });
+
+      // 2nd enrollment
+      await distributor.connect(owner).enroll()
+
+      const enrollment = await distributor.enrollments(owner.address);
+      console.log("enrollment:", enrollment);
+      expect(enrollment.timestamp).to.not.equal(0);
+      expect(enrollment.amount).to.equal(amountPerEnrollment);
+    });
   });
 
   describe("isEligibleToClaim", function () {
