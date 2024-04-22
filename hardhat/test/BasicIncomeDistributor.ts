@@ -455,7 +455,7 @@ describe("BasicIncomeDistributor", function () {
 
       // Simulate the passage of time, to 364 days later
       await time.increase(ONE_DAY_IN_SECONDS * 364);
-      console.log("364 days later:", new Date(await time.latest() * 1_000));
+      console.log("364 days later:", new Date((await time.latest()) * 1_000));
 
       // 2nd enrollment
       await expect(
@@ -504,7 +504,7 @@ describe("BasicIncomeDistributor", function () {
 
       // Simulate the passage of time, to 366 days later
       await time.increase(ONE_DAY_IN_SECONDS * 366);
-      console.log("364 days later:", new Date(await time.latest() * 1_000));
+      console.log("364 days later:", new Date((await time.latest()) * 1_000));
 
       // Fund contract for covering one additional citizen's Basic Income
       await owner.sendTransaction({
@@ -513,7 +513,7 @@ describe("BasicIncomeDistributor", function () {
       });
 
       // 2nd enrollment
-      await distributor.connect(owner).enroll()
+      await distributor.connect(owner).enroll();
 
       const enrollment = await distributor.enrollments(owner.address);
       console.log("enrollment:", enrollment);
