@@ -86,7 +86,7 @@ npx prettier '**/*.{json,sol,md}' --write
 
 ## Deployments
 
-### Sepolia (`v0.4.0`)
+### Sepolia (`v0.7.0`)
 
 https://github.com/nation3/foundations/blob/main/deployments/sepolia.json
 
@@ -95,9 +95,9 @@ npx hardhat run --network sepolia ./scripts/deploy-distributor.ts
 npx hardhat verify --network sepolia <address> <arguments>
 ```
 
-- `BasicIncomeDistributor.sol`: [`0x1889E59E1c2b2F4D6ad1114a197652b052fb9109`](https://sepolia.etherscan.io/address/0x1889E59E1c2b2F4D6ad1114a197652b052fb9109)
+- `BasicIncomeDistributor.sol`: [`0xE0bE5f2282FC8A32758f914EDB3ED2727bE570E3`](https://sepolia.etherscan.io/address/0xE0bE5f2282FC8A32758f914EDB3ED2727bE570E3)
 
-### Mainnet
+### Mainnet (`v0.7.0`)
 
 https://github.com/nation3/foundations/blob/main/deployments/mainnet.json
 
