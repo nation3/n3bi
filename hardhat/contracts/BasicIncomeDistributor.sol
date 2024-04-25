@@ -193,13 +193,10 @@ contract BasicIncomeDistributor {
         }
 
         uint256 claimableAmount = getClaimableAmount(msg.sender);
-        require(claimableAmount > 0, "There is no income to claim.");
 
         // Distribute income to citizen
-        payable(msg.sender).transfer(claimableAmount);
-
-        // Update latest claim timestamp
         latestClaimTimestamps[msg.sender] = block.timestamp;
+        payable(msg.sender).transfer(claimableAmount);
         emit Claimed(msg.sender, claimableAmount);
     }
 }

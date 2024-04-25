@@ -570,6 +570,8 @@ describe("BasicIncomeDistributor", function () {
 
       // Claim passport
       await passportIssuer.connect(user2).claim();
+      const passportId = await passportIssuer.passportId(user2.address);
+      console.log("passportId:", passportId);
 
       expect(await distributor.isEligibleToClaim(user2.address)).to.equal(
         false
@@ -780,10 +782,42 @@ describe("BasicIncomeDistributor", function () {
 
       // Claim passport
       await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
 
       await expect(
         distributor.connect(owner).claim()
       ).to.be.revertedWithCustomError(distributor, "NotEligibleError");
+    });
+
+    it("address is passport owner, and passport has not expired", async function () {
+      const { distributor, owner, passportIssuer, votingEscrow } =
+        await loadFixture(deployFixture);
+
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      // Lock 1.51 $NATION for 4 years
+      const lockAmount = ethers.utils.parseUnits("1.51");
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow
+        .connect(owner)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await expect(distributor.connect(owner).claim()).to.emit(
+        distributor,
+        "Claimed"
+      );
     });
   });
 });
