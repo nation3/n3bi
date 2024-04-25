@@ -57,7 +57,10 @@ contract BasicIncomeDistributor {
 
     error NotEligibleError(address citizen);
     error CurrentlyEnrolledError(address citizen, uint256 enrollmentTimestamp);
-    error NotEnoughFunding(uint256 amountAvailable, uint256 amountRequested);
+    error NotEnoughFundingError(
+        uint256 amountAvailable,
+        uint256 amountRequested
+    );
 
     constructor(
         address passportUtilsAddress,
@@ -138,7 +141,7 @@ contract BasicIncomeDistributor {
 
         uint256 amountAvailable = address(this).balance - amountEnrolled;
         if (amountAvailable < amountPerEnrollment) {
-            revert NotEnoughFunding(amountAvailable, amountPerEnrollment);
+            revert NotEnoughFundingError(amountAvailable, amountPerEnrollment);
         }
 
         amountEnrolled += amountPerEnrollment;
@@ -190,7 +193,7 @@ contract BasicIncomeDistributor {
         }
 
         uint256 claimableAmount = getClaimableAmount(msg.sender);
-        require(claimableAmount > 0, "There is no reward to claim.");
+        require(claimableAmount > 0, "There is no income to claim.");
 
         // Distribute income to citizen
         payable(msg.sender).transfer(claimableAmount);

@@ -349,7 +349,7 @@ describe("BasicIncomeDistributor", function () {
 
       await expect(
         distributor.connect(owner).enroll()
-      ).to.be.revertedWithCustomError(distributor, "NotEnoughFunding");
+      ).to.be.revertedWithCustomError(distributor, "NotEnoughFundingError");
 
       const enrollment = await distributor.enrollments(owner.address);
       console.log("enrollment:", enrollment);
