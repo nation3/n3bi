@@ -772,5 +772,18 @@ describe("BasicIncomeDistributor", function () {
         distributor.connect(owner).claim()
       ).to.be.revertedWithCustomError(distributor, "NotEligibleError");
     });
+
+    it("address is passport owner, but passport has expired", async function () {
+      const { distributor, owner, passportIssuer } = await loadFixture(
+        deployFixture
+      );
+
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+
+      await expect(
+        distributor.connect(owner).claim()
+      ).to.be.revertedWithCustomError(distributor, "NotEligibleError");
+    });
   });
 });
