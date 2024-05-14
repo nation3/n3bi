@@ -27,7 +27,7 @@ sequenceDiagram
 
 The [`NationCred.sol`](https://github.com/nation3/nationcred-contracts/blob/main/contracts/NationCred.sol) smart contract contains code for getting the citizen activity status for a given passport ID.
 
-Each week, Nation3's NationCred maintainers will manually update the list of citizens that are eligible.
+At the end of each week, Nation3's NationCred smart contract will be automatically updated with the list of citizens that are eligible.
 
 ### Enrollment
 
