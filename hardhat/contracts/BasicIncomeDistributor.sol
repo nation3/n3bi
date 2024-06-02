@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity ^0.8.25;
+pragma solidity ^0.8.26;
 
 import "@nation3/nationcred-contracts/INationCred.sol";
 import "@nation3/nationcred-contracts/utils/IPassportUtils.sol";
