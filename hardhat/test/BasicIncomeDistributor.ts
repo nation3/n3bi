@@ -59,6 +59,11 @@ describe("BasicIncomeDistributor", function () {
     };
   }
 
+  beforeEach(async function () {
+    // Make test output more readable
+    console.log("");
+  });
+
   it("Should deploy contract", async function () {
     const { distributor, passportUtils } = await loadFixture(deployFixture);
 
@@ -770,6 +775,11 @@ describe("BasicIncomeDistributor", function () {
     it("address is not passport owner", async function () {
       const { distributor, owner } = await loadFixture(deployFixture);
 
+      const claimableAmount = await distributor.getClaimableAmount(
+        owner.address
+      );
+      console.log("claimableAmount:", claimableAmount);
+
       await expect(
         distributor.connect(owner).claim()
       ).to.be.revertedWithCustomError(distributor, "NotEligibleError");
@@ -784,6 +794,11 @@ describe("BasicIncomeDistributor", function () {
       await passportIssuer.connect(owner).claim();
       const passportId = await passportIssuer.passportId(owner.address);
       console.log("passportId:", passportId);
+
+      const claimableAmount = await distributor.getClaimableAmount(
+        owner.address
+      );
+      console.log("claimableAmount:", claimableAmount);
 
       await expect(
         distributor.connect(owner).claim()
@@ -814,9 +829,116 @@ describe("BasicIncomeDistributor", function () {
       const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
       console.log("votingEscrowBalance:", votingEscrowBalance);
 
+      const claimableAmount = await distributor.getClaimableAmount(
+        owner.address
+      );
+      console.log("claimableAmount:", claimableAmount);
+
       await expect(distributor.connect(owner).claim()).to.emit(
         distributor,
         "Claimed"
+      );
+    });
+
+    it("handle multiple claims during one enrollment", async function () {
+      const { distributor, owner, passportIssuer, votingEscrow, nationCred } =
+        await loadFixture(deployFixture);
+
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      // Lock 10 $NATION for 4 years
+      const lockAmount = ethers.utils.parseUnits("10");
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow
+        .connect(owner)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await nationCred.setActiveCitizens([passportId]);
+
+      // Fund contract for covering one additional citizen's Basic Income
+      await owner.sendTransaction({
+        to: distributor.address,
+        value: amountPerEnrollment,
+      });
+
+      let distributorBalance = await distributor.provider.getBalance(
+        distributor.address
+      );
+      console.log("distributorBalance:", distributorBalance);
+      expect(distributorBalance).to.equal(ethers.utils.parseEther("0.12"));
+
+      await distributor.connect(owner).enroll();
+      let enrollment = await distributor.enrollments(owner.address);
+      console.log("enrollment:", enrollment);
+      console.log("enrollment date:", new Date(enrollment.timestamp * 1_000));
+
+      // Simulate the passage of time, to 91.25 days after enrollment
+      const timestampOf1stClaim =
+        Number(enrollment.timestamp) + ONE_DAY_IN_SECONDS * 91.25;
+      console.log("timestampOf1stClaim:", timestampOf1stClaim);
+      await time.increaseTo(timestampOf1stClaim);
+      console.log("91.25 days later:", new Date((await time.latest()) * 1_000));
+
+      let claimableAmount = await distributor.getClaimableAmount(owner.address);
+      console.log("claimableAmount:", claimableAmount);
+
+      await expect(distributor.connect(owner).claim()).to.emit(
+        distributor,
+        "Claimed"
+      ) /* .withArgs(owner.address, ethers.utils.parseEther("0.03")) */;
+
+      enrollment = await distributor.enrollments(owner.address);
+      console.log("enrollment:", enrollment);
+
+      distributorBalance = await distributor.provider.getBalance(
+        distributor.address
+      );
+      console.log("distributorBalance:", distributorBalance);
+      expect(distributorBalance).to.be.lessThanOrEqual(
+        ethers.utils.parseEther("0.09")
+      ); // 0.12 - 0.03 = 0.09
+      expect(distributorBalance).to.be.greaterThan(
+        ethers.utils.parseEther("0.089999")
+      );
+
+      // Simulate the passage of time, to 182.5 days after enrollment
+      const timestampOf2ndClaim =
+        Number(enrollment.timestamp) + ONE_DAY_IN_SECONDS * 182.5;
+      console.log("timestampOf2ndClaim:", timestampOf2ndClaim);
+      await time.increaseTo(timestampOf2ndClaim);
+      console.log("182.5 days later:", new Date((await time.latest()) * 1_000));
+
+      claimableAmount = await distributor.getClaimableAmount(owner.address);
+      console.log("claimableAmount:", claimableAmount);
+
+      await expect(distributor.connect(owner).claim()).to.emit(
+        distributor,
+        "Claimed"
+      ) /* .withArgs(owner.address, ethers.utils.parseEther("0.03")) */;
+
+      enrollment = await distributor.enrollments(owner.address);
+      console.log("enrollment:", enrollment);
+
+      distributorBalance = await distributor.provider.getBalance(
+        distributor.address
+      );
+      console.log("distributorBalance:", distributorBalance);
+      expect(distributorBalance).to.be.lessThanOrEqual(
+        ethers.utils.parseEther("0.06")
+      ); // 0.12 - 0.03 - 0.03 = 0.06
+      expect(distributorBalance).to.be.greaterThan(
+        ethers.utils.parseEther("0.059999")
       );
     });
   });
