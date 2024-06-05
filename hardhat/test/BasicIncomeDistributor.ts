@@ -879,7 +879,7 @@ describe("BasicIncomeDistributor", function () {
       expect(distributorBalance).to.equal(ethers.utils.parseEther("0.12"));
 
       await distributor.connect(owner).enroll();
-      const enrollment = await distributor.enrollments(owner.address);
+      let enrollment = await distributor.enrollments(owner.address);
       console.log("enrollment:", enrollment);
       console.log("enrollment date:", new Date(enrollment.timestamp * 1_000));
 
@@ -897,6 +897,9 @@ describe("BasicIncomeDistributor", function () {
         distributor,
         "Claimed"
       ) /* .withArgs(owner.address, ethers.utils.parseEther("0.03")) */;
+
+      enrollment = await distributor.enrollments(owner.address);
+      console.log("enrollment:", enrollment);
 
       distributorBalance = await distributor.provider.getBalance(
         distributor.address
@@ -923,6 +926,9 @@ describe("BasicIncomeDistributor", function () {
         distributor,
         "Claimed"
       ) /* .withArgs(owner.address, ethers.utils.parseEther("0.03")) */;
+
+      enrollment = await distributor.enrollments(owner.address);
+      console.log("enrollment:", enrollment);
 
       distributorBalance = await distributor.provider.getBalance(
         distributor.address

@@ -27,6 +27,7 @@ contract BasicIncomeDistributor {
     struct Enrollment {
         uint256 timestamp;
         uint256 amount;
+        uint256 amountClaimed;
     }
 
     string public constant VERSION = "0.7.0";
@@ -177,13 +178,13 @@ contract BasicIncomeDistributor {
         // Calculate the time passed since the enrollment
         uint256 enrollmentDuration = block.timestamp - enrollment.timestamp;
 
-        // If the enrollment period has ended, return the full amount
-        if (enrollmentDuration >= 365 days) {
-            return amountPerEnrollment;
-        }
+        // Calculate the total claimable amount based on the enrollment duration relative to 1 year
+        uint256 totalClaimableAmount = (enrollmentDuration >= 365 days)
+            ? amountPerEnrollment
+            : (amountPerEnrollment * enrollmentDuration) / 365 days;
 
-        // Calculate the amount based on the enrollment duration relative to 1 year
-        return (amountPerEnrollment * enrollmentDuration) / 365 days;
+        // Return the total claimable amount, minus previous claims (if any)
+        return totalClaimableAmount - enrollment.amountClaimed;
     }
 
     /// @notice Once enrolled, citizens can claim their earned Basic Income at any time.
@@ -197,6 +198,12 @@ contract BasicIncomeDistributor {
         // Distribute income to citizen
         latestClaimTimestamps[msg.sender] = block.timestamp;
         payable(msg.sender).transfer(claimableAmount);
+
+        // Update enrollment
+        Enrollment memory enrollment = enrollments[msg.sender];
+        enrollment.amountClaimed += claimableAmount;
+        enrollments[msg.sender] = enrollment;
+
         emit Claimed(msg.sender, claimableAmount);
     }
 }
