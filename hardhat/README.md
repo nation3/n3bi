@@ -43,7 +43,7 @@ npx hardhat coverage
 Check if coverage threshold has been met:
 
 ```
-npx istanbul check-coverage --lines 80
+npx istanbul check-coverage --lines 90
 ```
 
 ## Local Ethereum Node
