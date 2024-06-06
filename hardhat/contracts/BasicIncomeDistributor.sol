@@ -49,9 +49,6 @@ contract BasicIncomeDistributor {
     /// @notice Each citizen's most recent enrollment.
     mapping(address => Enrollment) public enrollments;
 
-    /// @notice The timestamp of each citizen's most recent claim.
-    mapping(address => uint256) public latestClaimTimestamps;
-
     event Enrolled(address citizen);
     event Claimed(address citizen, uint256 amount);
     event AmountPerEnrollmentUpdated(uint256 newAmount);
@@ -196,7 +193,6 @@ contract BasicIncomeDistributor {
         uint256 claimableAmount = getClaimableAmount(msg.sender);
 
         // Distribute income to citizen
-        latestClaimTimestamps[msg.sender] = block.timestamp;
         payable(msg.sender).transfer(claimableAmount);
 
         // Update enrollment
