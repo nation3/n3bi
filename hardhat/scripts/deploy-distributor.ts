@@ -18,7 +18,6 @@ async function main() {
 
   // Constructor Args
   const args = [passportUtilsAddress, nationCredAddress, amountPerEnrollment];
-  console.log("Contract is deploying....");
   const contractAddress = await deployContract(contractName, args);
   await verifyContract(contractPath, contractAddress, args);
 }
