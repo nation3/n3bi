@@ -1,5 +1,5 @@
+import { loadFixture, time } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
-import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { ethers } from "hardhat";
 
 const amountPerEnrollment = ethers.utils.parseEther("0.12");
@@ -10,6 +10,9 @@ describe("BasicIncomeDistributor", function () {
   async function deployFixture() {
     const [owner, otherAccount, user1, user2, user3] =
       await ethers.getSigners();
+
+    console.log("owner:", owner.address);
+
     const ownerBalance = await owner.getBalance();
     console.log("ownerBalance:", ownerBalance);
 
@@ -38,6 +41,7 @@ describe("BasicIncomeDistributor", function () {
     );
 
     const distributor = await BasicIncomeDistributor.deploy(
+      owner.address,
       passportUtils.address,
       nationCred.address,
       amountPerEnrollment
@@ -72,6 +76,11 @@ describe("BasicIncomeDistributor", function () {
 
     expect(passportUtils.address).to.not.equal(undefined);
     expect(passportUtils.address.length).to.equal(42);
+  });
+
+  it("Should set owner via constructor parameter during deployment", async () => {
+    const { owner, distributor } = await loadFixture(deployFixture);
+    expect(await distributor.signer.getAddress()).to.equal(owner.address);
   });
 
   it("setOwner", async function () {
