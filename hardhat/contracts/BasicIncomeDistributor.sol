@@ -61,11 +61,12 @@ contract BasicIncomeDistributor {
     );
 
     constructor(
+        address contractOwner,
         address passportUtilsAddress,
         address nationCredAddress,
         uint256 amountPerEnrollment_
     ) {
-        owner = address(msg.sender);
+        owner = contractOwner; // set the owner of the contract via constructor parameter
         passportUtils = IPassportUtils(passportUtilsAddress);
         nationCred = INationCred(nationCredAddress);
         amountPerEnrollment = amountPerEnrollment_;
