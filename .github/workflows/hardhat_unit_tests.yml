@@ -28,7 +28,7 @@ jobs:
 
     - run: npx hardhat test
     - run: npx hardhat coverage
-    - run: npx istanbul check-coverage --lines 90
+    - run: npx istanbul check-coverage --lines 93
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
