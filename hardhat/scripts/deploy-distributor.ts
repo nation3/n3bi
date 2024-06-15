@@ -5,7 +5,7 @@ import { verifyContract, deployContract } from "./helpers.ts";
 const passportUtilsAddress = "0x68ADa619A2b806A2bEc8e3789FfBA206641c22ff";
 const nationCredAddress = "0x3C38FBe04C455eFaF762d00c400e1A6589f7269A";
 const amountPerEnrollment = ethers.utils.parseEther("0.0033");
-const ownerAddress = "0xFBB66BC799308435eD2a0e0C0ac3ad1D46749B7b"
+const ownerAddress = "0xFBB66BC799308435eD2a0e0C0ac3ad1D46749B7b";
 
 
 // // Mainnet
