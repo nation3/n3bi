@@ -38,6 +38,7 @@ describe("BasicIncomeDistributor", function () {
     );
 
     const distributor = await BasicIncomeDistributor.deploy(
+      owner.address,
       passportUtils.address,
       nationCred.address,
       amountPerEnrollment
@@ -62,6 +63,11 @@ describe("BasicIncomeDistributor", function () {
   beforeEach(async function () {
     // Make test output more readable
     console.log("");
+  });
+
+  it("Should set the correct owner during deployment", async function () {
+    const { distributor, owner } = await loadFixture(deployFixture);
+    expect(await distributor.owner()).to.equal(owner.address);
   });
 
   it("Should deploy contract", async function () {
