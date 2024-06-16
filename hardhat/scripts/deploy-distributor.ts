@@ -1,5 +1,8 @@
+import dotenv from "dotenv";
 import { ethers } from "hardhat";
-import { verifyContract, deployContract } from "./helpers.ts";
+import { deployContract, verifyContract } from "./helpers.ts";
+
+dotenv.config();
 
 // Sepolia
 const passportUtilsAddress = "0x68ADa619A2b806A2bEc8e3789FfBA206641c22ff";
@@ -15,9 +18,17 @@ async function main() {
   const contractName = "BasicIncomeDistributor";
   const contractPath =
     "contracts/BasicIncomeDistributor.sol:BasicIncomeDistributor";
+  const contractOwner =
+    process.env.CONTRACT_OWNER || "0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199"; // Replace with `CONTRACT_OWNER`
 
   // Constructor Args
-  const args = [passportUtilsAddress, nationCredAddress, amountPerEnrollment];
+  const args = [
+    contractOwner,
+    passportUtilsAddress,
+    nationCredAddress,
+    amountPerEnrollment,
+  ];
+
   const contractAddress = await deployContract(contractName, args);
   await verifyContract(contractPath, contractAddress, args);
 }
