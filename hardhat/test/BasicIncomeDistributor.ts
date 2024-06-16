@@ -68,6 +68,11 @@ describe("BasicIncomeDistributor", function () {
     console.log("");
   });
 
+  it("Should set the correct owner during deployment", async function () {
+    const { distributor, owner } = await loadFixture(deployFixture);
+    expect(await distributor.owner()).to.equal(owner.address);
+  });
+
   it("Should deploy contract", async function () {
     const { distributor, passportUtils } = await loadFixture(deployFixture);
 
