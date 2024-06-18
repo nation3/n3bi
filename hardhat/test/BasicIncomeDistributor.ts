@@ -864,7 +864,6 @@ describe("BasicIncomeDistributor", function () {
       const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
       console.log("votingEscrowBalance:", votingEscrowBalance);
 
-
       await nationCred.setActiveCitizens([passportId]);
 
       // Fund contract for covering one additional citizen's Basic Income
