@@ -811,7 +811,7 @@ describe("BasicIncomeDistributor", function () {
       ).to.be.revertedWithCustomError(distributor, "NotEligibleError");
     });
 
-    it("address is passport owner, and passport has not expired", async function () {
+    it("address is not enrolled", async function () {
       const { distributor, owner, passportIssuer, votingEscrow } =
         await loadFixture(deployFixture);
 
@@ -834,6 +834,48 @@ describe("BasicIncomeDistributor", function () {
         .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
       const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
       console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await expect(
+        distributor.connect(owner).claim()
+      ).to.be.revertedWithCustomError(distributor, "NotEnrolledError");
+    });
+
+    it("address is passport owner, and passport has not expired", async function () {
+      const { distributor, owner, passportIssuer, votingEscrow, nationCred } =
+        await loadFixture(deployFixture);
+
+      // Claim passport
+      await passportIssuer.connect(owner).claim();
+      const passportId = await passportIssuer.passportId(owner.address);
+      console.log("passportId:", passportId);
+
+      // Lock 10 $NATION for 4 years
+      const lockAmount = ethers.utils.parseUnits("10");
+      const initialLockDate = new Date();
+      console.log("initialLockDate:", initialLockDate);
+      const lockEnd = new Date(
+        initialLockDate.getTime() + 4 * oneYearInMilliseconds
+      );
+      console.log("lockEnd:", lockEnd);
+      const lockEndInSeconds = Math.round(lockEnd.getTime() / 1_000);
+      await votingEscrow
+        .connect(owner)
+        .create_lock(lockAmount, ethers.BigNumber.from(lockEndInSeconds));
+      const votingEscrowBalance = await votingEscrow.balanceOf(owner.address);
+      console.log("votingEscrowBalance:", votingEscrowBalance);
+
+      await nationCred.setActiveCitizens([passportId]);
+
+      // Fund contract for covering one additional citizen's Basic Income
+      await owner.sendTransaction({
+        to: distributor.address,
+        value: amountPerEnrollment,
+      });
+
+      await distributor.connect(owner).enroll();
+
+      const isEnrolled = await distributor.isEnrolled(owner.address);
+      console.log("isEnrolled:", isEnrolled);
 
       const claimableAmount = await distributor.getClaimableAmount(
         owner.address

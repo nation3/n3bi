@@ -59,6 +59,7 @@ contract BasicIncomeDistributor {
         uint256 amountAvailable,
         uint256 amountRequested
     );
+    error NotEnrolledError(address citizen);
 
     constructor(
         address ownerAddress,
@@ -122,6 +123,11 @@ contract BasicIncomeDistributor {
         }
 
         return true;
+    }
+
+    /// @notice Checks if a citizen is currently enrolled.
+    function isEnrolled(address citizen) public view returns (bool) {
+        return enrollments[citizen].timestamp != 0;
     }
 
     /// @notice Once eligible, the citizen can enroll for Basic Income, as long as the smart contract contains enough funding for covering one additional citizen's Basic Income for the duration of 1 year.
@@ -189,6 +195,10 @@ contract BasicIncomeDistributor {
     function claim() public {
         if (!isEligibleToClaim(msg.sender)) {
             revert NotEligibleError(msg.sender);
+        }
+
+        if (!isEnrolled(msg.sender)) {
+            revert NotEnrolledError(msg.sender);
         }
 
         uint256 claimableAmount = getClaimableAmount(msg.sender);
