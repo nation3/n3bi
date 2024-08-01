@@ -49,9 +49,6 @@ contract BasicIncomeDistributor {
     /// @notice Each citizen's most recent enrollment.
     mapping(address => Enrollment) public enrollments;
 
-    /// @notice The timestamp of each citizen's most recent claim.
-    mapping(address => uint256) public latestClaimTimestamps;
-
     event Enrolled(address citizen);
     event Claimed(address citizen, uint256 amount);
     event AmountPerEnrollmentUpdated(uint256 newAmount);
@@ -62,13 +59,15 @@ contract BasicIncomeDistributor {
         uint256 amountAvailable,
         uint256 amountRequested
     );
+    error NotEnrolledError(address citizen);
 
     constructor(
+        address ownerAddress,
         address passportUtilsAddress,
         address nationCredAddress,
         uint256 amountPerEnrollment_
     ) {
-        owner = address(msg.sender);
+        owner = ownerAddress;
         passportUtils = IPassportUtils(passportUtilsAddress);
         nationCred = INationCred(nationCredAddress);
         amountPerEnrollment = amountPerEnrollment_;
@@ -124,6 +123,11 @@ contract BasicIncomeDistributor {
         }
 
         return true;
+    }
+
+    /// @notice Checks if a citizen is currently enrolled.
+    function isEnrolled(address citizen) public view returns (bool) {
+        return enrollments[citizen].timestamp != 0;
     }
 
     /// @notice Once eligible, the citizen can enroll for Basic Income, as long as the smart contract contains enough funding for covering one additional citizen's Basic Income for the duration of 1 year.
@@ -193,10 +197,13 @@ contract BasicIncomeDistributor {
             revert NotEligibleError(msg.sender);
         }
 
+        if (!isEnrolled(msg.sender)) {
+            revert NotEnrolledError(msg.sender);
+        }
+
         uint256 claimableAmount = getClaimableAmount(msg.sender);
 
         // Distribute income to citizen
-        latestClaimTimestamps[msg.sender] = block.timestamp;
         payable(msg.sender).transfer(claimableAmount);
 
         // Update enrollment
