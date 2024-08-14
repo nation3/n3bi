@@ -21,6 +21,9 @@
     "url": "https://github.com/nation3/n3bi/issues"
   },
   "homepage": "https://github.com/nation3/n3bi#readme",
+  "engines": {
+    "node": "20.x"
+  },
   "devDependencies": {
     "@nation3/nationcred-contracts": "^0.7.0",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.11",
