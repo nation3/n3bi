@@ -1,7 +1,7 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { Poppins } from 'next/font/google'
-import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import { darkTheme, getDefaultConfig, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiProvider } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains'
@@ -21,7 +21,10 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
+        <RainbowKitProvider theme={{
+          lightMode: lightTheme(),
+          darkMode: darkTheme()
+        }}>
           <main className={poppins.className}>
             <Component {...pageProps} />
           </main>
