@@ -5,6 +5,7 @@ import Menu from '@/components/Menu'
 import Link from 'next/link'
 import LoadingIndicator from '@/components/LoadingIndicator'
 import { config } from '@/utils/Config'
+import WalletMenu from '@/components/WalletMenu'
 
 export default function Home() {
   console.log('Home')
@@ -13,9 +14,12 @@ export default function Home() {
       <Menu />
 
       <div className='w-full lg:w-3/4 p-8'>
+        <div className='hidden lg:block pb-8 border-b-2 border-slate-50 dark:border-slate-800 mb-8'>
+            <WalletMenu />
+        </div>
+
         <h1 className="text-3xl font-bold flex">
-          Nation3 Basic Income (N3BI)&nbsp;
-          <Image src={flag} width={36} height={36} alt='Nation3 Flag' />
+          Nation3 Basic Income&nbsp;<Image src={flag} width={36} height={36} alt='Nation3 Flag' />
         </h1>
 
         <div className='mt-4'>

@@ -2,12 +2,16 @@ import Image from 'next/image'
 import logo from '../../public/logo.svg'
 import Link from 'next/link'
 import { BanknotesIcon, Bars3Icon, ChevronRightIcon, CurrencyDollarIcon, LockClosedIcon, Squares2X2Icon, UserPlusIcon, UsersIcon } from '@heroicons/react/24/outline'
+import WalletHeader from './WalletMenu'
 
 export default function Menu() {
   return (
     <>
       <div id='menu-medium' className='lg:hidden p-8'>
         <div className="flex-none lg:hidden">
+          <div className='float-right'>
+            <WalletHeader />
+          </div>
           <input id='drawer' className='peer/drawer hidden' type='checkbox' />
           <label htmlFor='drawer'>
             <Bars3Icon className="h-8 w-8" />
